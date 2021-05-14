@@ -36,9 +36,16 @@ extension ListExtension<E> on Iterable<E> {
       r.add(e);
       r.add(insertable);
     }
-    if (!afterLast) {
-      r.removeLast();
+    if (this.length == 0) {
+      if (afterLast) {
+        r.add(insertable);
+      }
+    } else {
+      if (!afterLast) {
+        r.removeLast();
+      }
     }
+
     return r;
   }
 }
