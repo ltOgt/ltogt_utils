@@ -1,13 +1,14 @@
 name: ltogt_utils
 description: A collection of utility classes, functions, extensions, helpers, ...
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/ltOgt
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.13.0 <3.0.0"
 
 dependencies:
 
 dev_dependencies:
+  test:
 
 flutter: null
