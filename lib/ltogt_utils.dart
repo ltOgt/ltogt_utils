@@ -9,3 +9,5 @@ export 'src/list/list_extension.dart';
 export 'src/num/num_helper.dart';
 
 export 'src/map/n_way_lookup.dart';
+
+export 'src/file/file_helper.dart';
