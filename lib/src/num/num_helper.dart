@@ -6,4 +6,14 @@ class NumHelper {
   static double toPrecision(num d, int p) {
     return num.parse(d.toStringAsFixed(p)).toDouble();
   }
+
+  static String paddedString(int value, int maxForPaddingLength) {
+    if (maxForPaddingLength < value) {
+      throw "maxForPaddingLength must be larger than value! $maxForPaddingLength < $value";
+    }
+
+    int length = maxForPaddingLength.toString().length;
+    String v = value.toString();
+    return ("0" * (length - v.length)) + v;
+  }
 }
