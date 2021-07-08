@@ -8,6 +8,10 @@ class FileHelper {
     return pathlib.join(p1, p2);
   }
 
+  static String fileName(FileSystemEntity f) {
+    return pathlib.basename(f.path);
+  }
+
   // ================================================= LS
   @Deprecated("Use listDirContent instead")
   static Future<List<FileSystemEntity>> listFilesInDir(Directory dir) => listDirContent(dir);
