@@ -62,7 +62,9 @@ class FileHelper {
     Directory subDir = Directory(joinPaths(dirPath, subDirName));
     if (await subDir.exists()) {
       if (replaceExisting) {
-        await subDir.delete(recursive: true);
+        try {
+          await subDir.delete(recursive: true);
+        } catch (_) {}
       } else {
         throw "Directory exists! Use replaceIfExists = true to overwrite";
       }
