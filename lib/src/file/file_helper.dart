@@ -30,8 +30,8 @@ class FileHelper {
   }
 
   /// Read all files from [dirPath]
-  static Future<List<File>> listFilesInDirectory(Directory directory) {
-    _validateDirExists(directory.path);
+  static Future<List<File>> listFilesInDirectory(Directory directory) async {
+    await _validateDirExists(directory.path);
 
     Completer<List<File>> fileCompleter = Completer();
     List<File> files = [];
@@ -57,14 +57,17 @@ class FileHelper {
     required String subDirName,
     required bool replaceExisting,
   }) async {
-    _validateDirExists(dirPath);
+    await _validateDirExists(dirPath);
 
     Directory subDir = Directory(joinPaths(dirPath, subDirName));
     if (await subDir.exists()) {
       if (replaceExisting) {
         try {
-          await subDir.delete(recursive: true);
-        } catch (_) {}
+          // This dumb *#!§ is needed since Directory.delete is not async and error handling does not work with try catch for some reason (asynchronous suspension)
+          await subDir.delete(recursive: true).onError((error, stackTrace) => throw error ?? "");
+        } catch (e) {
+          print("Error in createSubdir: $e");
+        }
       } else {
         throw "Directory exists! Use replaceIfExists = true to overwrite";
       }
@@ -81,7 +84,7 @@ class FileHelper {
     required List<int> bytes,
     required bool replaceIfExists,
   }) async {
-    _validateDirExists(directory.path);
+    await _validateDirExists(directory.path);
 
     String path = joinPaths(directory.path, fileName);
     File file = File(path);
