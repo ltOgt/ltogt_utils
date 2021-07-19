@@ -8,8 +8,22 @@ class FileHelper {
     return pathlib.join(p1, p2);
   }
 
+  static String joinPathSegments(List<String> segments) {
+    return segments.fold("", (acc, seg) => joinPaths(acc, seg));
+  }
+
   static String fileName(FileSystemEntity f) {
     return pathlib.basename(f.path);
+  }
+
+  static String baseName(String path) {
+    return pathlib.basename(path);
+  }
+
+  // TODO add more cases
+  /// Aims to replace all invalid characters from a file path
+  static String cleanPath(String path) {
+    return path.replaceAll(" ", "_");
   }
 
   // ================================================= LS
