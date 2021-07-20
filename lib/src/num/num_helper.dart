@@ -8,12 +8,18 @@ class NumHelper {
   }
 
   static String paddedString(int value, int maxForPaddingLength) {
-    if (maxForPaddingLength < value) {
-      throw "maxForPaddingLength must be larger than value! $maxForPaddingLength < $value";
+    if ("$maxForPaddingLength".length < "$value".length) {
+      throw Exception(
+        "maxForPaddingLength lenght must be larger than value length! $maxForPaddingLength.length < $value.length",
+      );
     }
 
     int length = maxForPaddingLength.toString().length;
     String v = value.toString();
+    if (value < 0) {
+      String _v = v.replaceFirst("-", "");
+      return "-" + ("0" * (length - _v.length)) + _v;
+    }
     return ("0" * (length - v.length)) + v;
   }
 }
