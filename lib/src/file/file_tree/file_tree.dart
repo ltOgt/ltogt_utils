@@ -31,6 +31,7 @@ class FileTree {
         key_rootDir: this.rootDir.encode(),
       };
 
+  static FileTree? decodeOrNull(Map m) => m == null ? null : FileTree.decode(m);
   static FileTree decode(Map m) => FileTree(
         rootDir: FileTreeDir.decode(m[key_rootDir]),
       );
