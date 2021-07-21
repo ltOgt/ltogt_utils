@@ -20,11 +20,25 @@ class FileHelper {
     return pathlib.basename(path);
   }
 
-  // TODO add more cases
   /// Aims to replace all invalid characters from a file path
+  /// File creation might still fail even with the returned string
+  /// see https://stackoverflow.com/a/31976060/7215915
   static String cleanPath(String path) {
-    return path.replaceAll(" ", "_");
+    for (final iC in _illegalChars) {
+      path = path.replaceAll(iC, '');
+    }
+    // just dont like spaces in file names
+    return path.replaceAll(' ', '_');
   }
+
+  static const _illegalChars = [
+    // linux, windows, mac
+    '/',
+    // windows, mac
+    ':',
+    // windows
+    '<', '>', '"', '\\', '|', '?', '*'
+  ];
 
   // ================================================= LS
   @Deprecated("Use listDirContent instead")
