@@ -12,3 +12,7 @@ export 'src/date/date_helper.dart';
 export 'src/map/n_way_lookup.dart';
 
 export 'src/file/file_helper.dart';
+
+export 'src/file/file_tree/file_tree.dart';
+export 'src/file/file_tree/file_tree_helper.dart';
+export 'src/file/file_tree/file_tree_path.dart';
