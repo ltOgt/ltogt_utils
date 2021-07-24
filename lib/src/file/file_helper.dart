@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:path/path.dart' as pathlib;
 
 class FileHelper {
+  FileHelper._();
+
   // ================================================= Path
   static String joinPaths(String p1, String p2) {
     return pathlib.join(p1, p2);

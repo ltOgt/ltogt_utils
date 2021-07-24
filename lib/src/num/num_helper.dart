@@ -1,4 +1,8 @@
+import 'package:ltogt_utils/ltogt_utils.dart';
+
 class NumHelper {
+  NumHelper._();
+
   /// Returns a double with the specified precision.
   ///
   /// `toPrecision(4321.12345678, 3)` => `4321.123`

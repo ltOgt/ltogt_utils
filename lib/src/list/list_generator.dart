@@ -1,6 +1,8 @@
 import 'package:ltogt_utils/src/list/list_extension.dart';
 
 class ListGenerator {
+  ListGenerator._();
+
   /// Like [List.generate(length, generator)] but with the actual list items instead of index.
   ///
   /// [ListGenerator.forEach] is like `for(var item in items)` where
