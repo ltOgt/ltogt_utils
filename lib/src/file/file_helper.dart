@@ -45,10 +45,10 @@ class FileHelper {
   // ================================================= LS
   @Deprecated("Use listDirContent instead")
   static Future<List<FileSystemEntity>> listFilesInDir(Directory dir) => listDirContent(dir);
-  static Future<List<FileSystemEntity>> listDirContent(Directory dir) {
+  static Future<List<FileSystemEntity>> listDirContent(Directory dir, {bool followLinks = false}) {
     var files = <FileSystemEntity>[];
     var completer = Completer<List<FileSystemEntity>>();
-    var lister = dir.list(recursive: false);
+    var lister = dir.list(recursive: false, followLinks: followLinks);
     lister.listen((file) => files.add(file), onError: (e) => throw e, onDone: () => completer.complete(files));
     return completer.future;
   }

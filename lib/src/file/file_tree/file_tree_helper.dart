@@ -6,6 +6,8 @@ import 'file_tree.dart';
 import 'file_tree_path.dart';
 
 class FileTreeHelper {
+  FileTreeHelper._();
+
   /// Recursively builds a [FileTree] starting from [rootDir], ignoring [blacklist] and stopping at [maxDepth] (default `30`).
   ///
   /// Ignores Links for now.
@@ -22,23 +24,31 @@ class FileTreeHelper {
   /// {@endtemplate}
   static Future<FileTree> createFileTree({
     required Directory rootDir,
-    List<String> blacklist = const [],
+    RegExp? blacklist,
     int maxDepth = 30,
     bool followSymlinks = false,
   }) async {
-    return FileTree(rootDir: await _walkDirRecursion(rootDir, maxDepth));
+    assert(followSymlinks == false, "followSymlinks=true; Not yet implemented");
+
+    return FileTree(rootDir: await _walkDirRecursion(rootDir, maxDepth, blacklist));
   }
 
-  static Future<FileTreeDir> _walkDirRecursion(Directory directory, int recursions) async {
+  static Future<FileTreeDir> _walkDirRecursion(Directory directory, int recursions, RegExp? blacklist) async {
     String name = FileHelper.fileName(directory);
     List<FileTreeFile> files = [];
     List<FileTreeDir> dirs = [];
 
-    List<FileSystemEntity> dirContent = await FileHelper.listDirContent(directory);
-    // TODO need to check against symbolic links
+    // TODO need to check against symbolic links leaving this dir, once [followSymlinks] is passed here
+    List<FileSystemEntity> dirContent = await FileHelper.listDirContent(directory, followLinks: false);
+
     for (FileSystemEntity entity in dirContent) {
+      // skip blacklisted
+      if (blacklist?.stringMatch(entity.path) != null) {
+        continue;
+      }
+
       if (entity is Directory) {
-        dirs.add(await _walkDirRecursion(entity, recursions - 1));
+        dirs.add(await _walkDirRecursion(entity, recursions - 1, blacklist));
       } else if (entity is File) {
         files.add(FileTreeFile(name: FileHelper.fileName(entity)));
       }
