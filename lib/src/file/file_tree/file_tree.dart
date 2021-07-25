@@ -37,6 +37,12 @@ class FileTree {
       );
 }
 
+abstract class FileTreeEntity {
+  String get name;
+  bool get isDir => this is FileTreeDir;
+  bool get isFile => this is FileTreeEntity;
+}
+
 /// ```
 /// {
 ///   "name" : <dir_name>
@@ -54,9 +60,11 @@ class FileTree {
 ///   ]
 /// }
 /// ```
-class FileTreeDir {
+class FileTreeDir extends FileTreeEntity {
   static const String key_name = "name";
   final String name;
+
+  List<FileTreeEntity> get entities => List.from(dirs)..addAll(files);
 
   static const String key_dirs = "dirs";
   final List<FileTreeDir> dirs;
@@ -88,7 +96,7 @@ class FileTreeDir {
 ///   "name" : <file_name>
 /// }
 /// ```
-class FileTreeFile {
+class FileTreeFile extends FileTreeEntity {
   static const String key_name = "name";
   final String name;
 
