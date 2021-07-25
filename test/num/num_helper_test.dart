@@ -52,4 +52,28 @@ void main() {
       expect(() => f(), throwsException);
     });
   });
+
+  group('rescale', () {
+    test('(0,100) => (-1,1)', () async {
+      double r(double v) => NumHelper.rescale(value: v, min: 0, max: 100, newMin: -1, newMax: 1);
+      final min = r(0);
+      final mid = r(50);
+      final max = r(100);
+
+      expect(min, equals(-1));
+      expect(mid, equals(0));
+      expect(max, equals(1));
+    });
+
+    test('(-1,1) => (-1.5,-.5)', () async {
+      double r(double v) => NumHelper.rescale(value: v, min: -1, max: 1, newMin: -1.5, newMax: -.5);
+      final min = r(-1);
+      final mid = r(0);
+      final max = r(1);
+
+      expect(min, equals(-1.5));
+      expect(mid, equals(-1));
+      expect(max, equals(-.5));
+    });
+  });
 }

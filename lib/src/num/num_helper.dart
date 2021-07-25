@@ -26,4 +26,15 @@ class NumHelper {
     }
     return ("0" * (length - v.length)) + v;
   }
+
+  // basically min-max scaling
+  static double rescale({
+    required double value,
+    required double max,
+    required double min,
+    required double newMax,
+    required double newMin,
+  }) {
+    return ((value - min) / (max - min)) * (newMax - newMin) + newMin;
+  }
 }
