@@ -22,15 +22,15 @@ class FileHelper {
     return pathlib.basename(path);
   }
 
-  /// Aims to replace all invalid characters from a file path
+  /// Aims to replace all invalid characters from a file name
   /// File creation might still fail even with the returned string
   /// see https://stackoverflow.com/a/31976060/7215915
-  static String cleanPath(String path) {
+  static String cleanName(String name) {
     for (final iC in _illegalChars) {
-      path = path.replaceAll(iC, '');
+      name = name.replaceAll(iC, '');
     }
     // just dont like spaces in file names
-    return path.replaceAll(' ', '_');
+    return name.replaceAll(' ', '_');
   }
 
   static const _illegalChars = [
