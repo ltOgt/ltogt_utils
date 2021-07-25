@@ -16,6 +16,9 @@ class FileTreeHelper {
   // Does not follow symlinks unless [followSymlinks] is explicitly set to true.
   // If true, still does not follow links that leave [rootDir]
   ///
+  /// [statDate] controlls whether statistics for files should be queried as well.
+  /// Defaults to false.
+  ///
   /// {@template createFileTree_validity}
   ///
   /// Gurantees that all files in the tree
@@ -27,13 +30,15 @@ class FileTreeHelper {
     RegExp? blacklist,
     int maxDepth = 30,
     bool followSymlinks = false,
+    bool statDate = false,
   }) async {
     assert(followSymlinks == false, "followSymlinks=true; Not yet implemented");
 
-    return FileTree(rootDir: await _walkDirRecursion(rootDir, maxDepth, blacklist));
+    return FileTree(rootDir: await _walkDirRecursion(rootDir, maxDepth, blacklist, statDate));
   }
 
-  static Future<FileTreeDir> _walkDirRecursion(Directory directory, int recursions, RegExp? blacklist) async {
+  static Future<FileTreeDir> _walkDirRecursion(
+      Directory directory, int recursions, RegExp? blacklist, bool statDate) async {
     String name = FileHelper.fileName(directory);
     List<FileTreeFile> files = [];
     List<FileTreeDir> dirs = [];
@@ -48,9 +53,12 @@ class FileTreeHelper {
       }
 
       if (entity is Directory) {
-        dirs.add(await _walkDirRecursion(entity, recursions - 1, blacklist));
+        dirs.add(await _walkDirRecursion(entity, recursions - 1, blacklist, statDate));
       } else if (entity is File) {
-        files.add(FileTreeFile(name: FileHelper.fileName(entity)));
+        files.add(FileTreeFile(
+          name: FileHelper.fileName(entity),
+          lastChange: statDate ? (await entity.stat()).modified : null,
+        ));
       }
     }
 
@@ -58,6 +66,7 @@ class FileTreeHelper {
       name: name,
       files: files,
       dirs: dirs,
+      lastChange: statDate ? (await directory.stat()).modified : null,
     );
   }
 
