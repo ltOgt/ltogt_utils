@@ -12,4 +12,6 @@ class StringOffset {
 
   @override
   String toString() => 'StringOffset(startIncl: $startIncl, endExcl: $endExcl)';
+
+  StringOffset offset(int o) => StringOffset(startIncl + o, endExcl + o);
 }
