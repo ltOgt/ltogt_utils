@@ -48,4 +48,12 @@ extension ListExtension<E> on Iterable<E> {
 
     return r;
   }
+
+  E? firstWhereOrNull(bool Function(E e) test) {
+    try {
+      return this.firstWhere((e) => test(e));
+    } on StateError catch (_) {
+      return null;
+    }
+  }
 }

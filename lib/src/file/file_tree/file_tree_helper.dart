@@ -83,7 +83,7 @@ class FileTreeHelper {
     required Directory rootDir,
     required FileTreePath fileTreePath,
   }) {
-    List<String> pathSegments = fileTreePath.path;
+    List<String> pathSegments = fileTreePath.segments;
     try {
       if (fileTree.rootDir.name != pathSegments.first) {
         throw Exception("Does not start at [rootDir]");
