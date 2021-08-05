@@ -22,6 +22,10 @@ class FileHelper {
     return pathlib.basename(path);
   }
 
+  static String fileType(String baseName) {
+    return pathlib.extension(baseName);
+  }
+
   /// Aims to replace all invalid characters from a file name
   /// File creation might still fail even with the returned string
   /// see https://stackoverflow.com/a/31976060/7215915
