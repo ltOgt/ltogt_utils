@@ -41,7 +41,7 @@ class FileTree {
 abstract class FileTreeEntity {
   String get name;
   bool get isDir => this is FileTreeDir;
-  bool get isFile => this is FileTreeEntity;
+  bool get isFile => this is FileTreeFile;
   DateTime? get lastChange;
 }
 
