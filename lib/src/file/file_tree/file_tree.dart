@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+
 /// ```
 /// "fileTree" : {
 ///   "rootDir" : {
@@ -36,6 +38,16 @@ class FileTree {
   static FileTree decode(Map m) => FileTree(
         rootDir: FileTreeDir.decode(m[key_rootDir]),
       );
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is FileTree && other.rootDir == rootDir;
+  }
+
+  @override
+  int get hashCode => rootDir.hashCode;
 }
 
 abstract class FileTreeEntity {
@@ -97,6 +109,23 @@ class FileTreeDir extends FileTreeEntity {
         key_files: files.map((file) => file.encode()).toList(),
         if (lastChange != null) key_lastChange: lastChange!.millisecondsSinceEpoch,
       };
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    final listEquals = const DeepCollectionEquality().equals;
+
+    return other is FileTreeDir &&
+        other.name == name &&
+        other.lastChange == lastChange &&
+        listEquals(other.dirs, dirs) &&
+        listEquals(other.files, files);
+  }
+
+  @override
+  int get hashCode {
+    return name.hashCode ^ lastChange.hashCode ^ dirs.hashCode ^ files.hashCode;
+  }
 }
 
 /// ```
@@ -125,4 +154,14 @@ class FileTreeFile extends FileTreeEntity {
         key_name: name,
         if (lastChange != null) key_lastChange: lastChange!.millisecondsSinceEpoch,
       };
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is FileTreeFile && other.name == name && other.lastChange == lastChange;
+  }
+
+  @override
+  int get hashCode => name.hashCode ^ lastChange.hashCode;
 }
