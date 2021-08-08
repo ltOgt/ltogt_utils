@@ -102,6 +102,6 @@ class FileTreeHelper {
     }
 
     // Path segments are valid and can be joined to create a file path
-    return pathSegments.fold("", (acc, ele) => FileHelper.joinPaths(acc, ele));
+    return pathSegments.fold(rootDir.parent.path, (acc, ele) => FileHelper.joinPaths(acc, ele));
   }
 }

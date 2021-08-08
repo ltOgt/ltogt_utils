@@ -22,11 +22,11 @@ void main() {
             ],
           ),
         ),
-        rootDir: Directory("root"),
+        rootDir: Directory("path/to/root"),
         fileTreePath: FileTreePath(["root", "child", "file.txt"]),
       );
 
-      expect(path, equals("root/child/file.txt"));
+      expect(path, equals("path/to/root/child/file.txt"));
     });
   });
 }
