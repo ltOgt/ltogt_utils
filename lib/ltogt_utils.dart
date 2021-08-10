@@ -21,3 +21,5 @@ export 'src/file/file_helper.dart';
 export 'src/file/file_tree/file_tree.dart';
 export 'src/file/file_tree/file_tree_helper.dart';
 export 'src/file/file_tree/file_tree_path.dart';
+
+export 'src/bool/bool_switch.dart';
