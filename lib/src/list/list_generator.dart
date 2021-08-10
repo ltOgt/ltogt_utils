@@ -28,7 +28,7 @@ class ListGenerator {
   static List<R> forRange<R>({
     int from = 0,
     required int to,
-    required R Function(int index) generator,
+    required R Function(int index) generator, // TODO rename to builder instead
   }) {
     return List.generate(
       to - from,
@@ -41,6 +41,7 @@ class ListGenerator {
   /// Set [leadingSeperator] to add [seperator] before the first item.
   /// Set [trailingSeperator] to add [seperator] after the last item.
   ///
+  // TODO intertwine might be a better name
   static List<R> seperated<T, R>({
     required List<T> list,
     required R Function(T item, int index) builder,
@@ -57,5 +58,17 @@ class ListGenerator {
         seperator,
         beforeFirst: leadingSeperator,
         afterLast: trailingSeperator,
+      );
+
+  static List<R> fromMap<K, V, R>({
+    required Map<K, V?> map,
+    required R Function(K key, V? value) builder,
+  }) =>
+      List.generate(
+        map.keys.length,
+        (index) {
+          final key = map.keys.elementAt(index);
+          return builder(key, map[key]);
+        },
       );
 }
