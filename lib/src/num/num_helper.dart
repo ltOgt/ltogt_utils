@@ -37,4 +37,8 @@ class NumHelper {
   }) {
     return ((value - min) / (max - min)) * (newMax - newMin) + newMin;
   }
+
+  static bool isBetween(double val, double? min, double? max) {
+    return (val >= (min ?? double.negativeInfinity) && val <= (max ?? double.infinity));
+  }
 }
