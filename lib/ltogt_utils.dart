@@ -23,3 +23,7 @@ export 'src/file/file_tree/file_tree_helper.dart';
 export 'src/file/file_tree/file_tree_path.dart';
 
 export 'src/bool/bool_switch.dart';
+
+export 'src/assert/xor_params.dart';
+
+export 'src/type/union.dart';
