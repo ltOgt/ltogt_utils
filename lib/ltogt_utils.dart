@@ -28,3 +28,5 @@ export 'src/bool/bool_switch.dart';
 export 'src/assert/xor_params.dart';
 
 export 'src/type/union.dart';
+
+export 'src/null/null_helpers.dart';
