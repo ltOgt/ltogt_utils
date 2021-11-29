@@ -6,6 +6,7 @@ export 'src/list/list_generator.dart';
 export 'src/list/list_extension.dart';
 
 export 'src/loop/loop_helper.dart';
+export 'src/loop/range.dart';
 
 export 'src/num/num_helper.dart';
 
