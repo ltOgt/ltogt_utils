@@ -8,6 +8,9 @@ class Union2<A, B> {
     this.a,
     this.b,
   }) : assert(xorParams([a, b]));
+
+  @override
+  String toString() => "Union(" + (a != null ? 'a: $a' : 'b: $b') + ")";
 }
 
 class Union3<A, B, C> {
