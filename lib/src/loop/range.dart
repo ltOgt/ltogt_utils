@@ -2,8 +2,8 @@ class Range extends Iterable {
   @override
   final Iterator iterator;
 
-  Range({
-    required int max,
+  Range(
+    int max, {
     int min = 0,
     bool increment = true,
   }) : iterator = _RangeIterator(
