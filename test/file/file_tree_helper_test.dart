@@ -1,7 +1,6 @@
 // Import the test package and Counter class
 import 'dart:io';
 
-import 'package:ltogt_utils/src/file/file_helper.dart';
 import 'package:ltogt_utils/src/file/file_tree/file_tree.dart';
 import 'package:ltogt_utils/src/file/file_tree/file_tree_helper.dart';
 import 'package:ltogt_utils/src/file/file_tree/file_tree_path.dart';
