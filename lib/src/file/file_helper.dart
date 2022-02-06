@@ -46,6 +46,11 @@ class FileHelper {
     '<', '>', '"', '\\', '|', '?', '*'
   ];
 
+  /// Creates an [Directory] object based on [dir] with the addage [subDir]
+  static Directory subdirObject(Directory dir, String subDir) {
+    return Directory(joinPaths(dir.path, subDir));
+  }
+
   // ================================================= LS
   @Deprecated("Use listDirContent instead")
   static Future<List<FileSystemEntity>> listFilesInDir(Directory dir) => listDirContent(dir);
