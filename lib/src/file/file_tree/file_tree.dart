@@ -30,7 +30,7 @@ class FileTree {
     required this.rootDir,
   });
 
-  Map encode() => {
+  Map<String, Map> encode() => {
         key_rootDir: this.rootDir.encode(),
       };
 
