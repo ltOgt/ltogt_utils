@@ -102,7 +102,7 @@ class ClassDefinition {
 
 class PoorMansGen {
   /// WIP + dirty generator for BRIDGE-able and SMALLREAD-able classes
-  String generateDataClass(ClassDefinition cd) {
+  static String generateDataClass(ClassDefinition cd) {
     StringBuffer buf = StringBuffer();
 
     // 1) generate imports
@@ -333,7 +333,7 @@ class PoorMansGen {
 
   /// Generates once for the actual [cd] and another time for the "Update" version.
   /// The update version will have all fields become nullable, unless their name is contained in [requiredNamesForUpdate].
-  String generateDataClassWithUpdater(ClassDefinition cd, Set<String> requiredNamesForUpdate) {
+  static String generateDataClassWithUpdater(ClassDefinition cd, Set<String> requiredNamesForUpdate) {
     StringBuffer buf = StringBuffer();
     buf.write(generateDataClass(cd));
     buf.writeln();
