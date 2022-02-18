@@ -33,3 +33,5 @@ export 'src/assert/xor_params.dart';
 export 'src/type/union.dart';
 
 export 'src/null/null_helpers.dart';
+
+export 'src/gen/poor_mans_gen.dart';
