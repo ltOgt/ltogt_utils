@@ -102,7 +102,7 @@ class ClassDefinition {
 
 class PoorMansGen {
   /// WIP + dirty generator for BRIDGE-able and SMALLREAD-able classes
-  static String generateDataClass(ClassDefinition cd) {
+  static String generateDataClass(ClassDefinition cd, [String? additionalCode]) {
     StringBuffer buf = StringBuffer();
 
     // 1) generate imports
@@ -279,6 +279,8 @@ class PoorMansGen {
           final subType = parseType(components[1]);
           switch (subType) {
             case _TypeType._string:
+              buf.writeln("${field.name}$excl,");
+              break;
             case _TypeType._int:
             case _TypeType._double:
               buf.writeln("${field.name}$excl.map((e) => '\$e').toList(),");
@@ -307,6 +309,34 @@ class PoorMansGen {
     buf.writeln("};");
     buf.writeln();
 
+    // 7) equals
+    buf.writeln("@override");
+    buf.writeln("bool operator ==(Object other) {");
+    buf.writeln("if (identical(this, other)) return true;");
+    if (cd.properties.any((p) => {_TypeType._list, _TypeType._map}.contains(parseType("${p.type}")))) {
+      buf.writeln("final deepEquals = const DeepCollectionEquality().equals;");
+    }
+    buf.writeln("return other is ${cd.className}");
+    for (final prop in cd.properties) {
+      buf.write("&& ");
+      if ({_TypeType._list, _TypeType._map}.contains(parseType("${prop.type}"))) {
+        buf.writeln("deepEquals(other.${prop.name}, ${prop.name})");
+      } else {
+        buf.writeln("other.${prop.name} == ${prop.name}");
+      }
+    }
+    buf.writeln(";");
+    buf.writeln("}");
+
+    // 8) hash code
+    buf.writeln("@override");
+    buf.writeln("int get hashCode {");
+    buf.writeln("return ${cd.properties.map((p) => p.name + ".hashCode").join(' ^ ')};");
+    buf.writeln("}");
+
+    // - additional code if any
+    if (additionalCode != null) buf.writeln(additionalCode);
+
     // 2-RE) close class
     buf.writeln("}");
 
@@ -331,6 +361,40 @@ class PoorMansGen {
     }
   }
 
+  static String _applyUpdateCode(ClassDefinition base, Set<String> requiredNamesForUpdate) {
+    StringBuffer buf = StringBuffer();
+
+    /**
+     HandleBrnr apply({
+    required HandleBrnr handle,
+  }) {
+    assert(handle.id == id);
+    return HandleBrnr(
+      schema: schema ?? handle.schema,
+      id: id,
+      file: file ?? handle.file,
+      chunks: chunks ?? handle.chunks,
+      relations: relations ?? handle.relations,
+    );
+  }
+     */
+    buf.writeln("${base.className} apply(${base.className} base) {");
+    for (final req in requiredNamesForUpdate) {
+      buf.writeln("assert(base.$req == $req);");
+    }
+    buf.writeln("return ${base.className}(");
+    for (final prop in base.properties) {
+      if (requiredNamesForUpdate.contains(prop.name)) {
+        buf.writeln("${prop.name}: ${prop.name},");
+      } else {
+        buf.writeln("${prop.name}: ${prop.name} ?? base.${prop.name},");
+      }
+    }
+    buf.writeln(");}");
+
+    return buf.toString();
+  }
+
   /// Generates once for the actual [cd] and another time for the "Update" version.
   /// The update version will have all fields become nullable, unless their name is contained in [requiredNamesForUpdate].
   static String generateDataClassWithUpdater(ClassDefinition cd, Set<String> requiredNamesForUpdate) {
@@ -338,16 +402,27 @@ class PoorMansGen {
     buf.write(generateDataClass(cd));
     buf.writeln();
     buf.writeln();
-    buf.write(generateDataClass(cd.copyWith(
-      className: cd.className + "Update",
-      properties: [
-        for (final prop in cd.properties)
-          prop.copyWith(
-            nullable: !requiredNamesForUpdate.contains(prop.name),
-            optional: !requiredNamesForUpdate.contains(prop.name),
-          ),
-      ],
-    )));
+    buf.write(
+      generateDataClass(
+        cd.copyWith(
+          imports: [],
+          className: cd.className + "Update",
+          docString: [
+            "Generated Updater for [${cd.className}]",
+            "Contains the same fields, only made nullable",
+            "This is useful since we might only want to change a single value",
+          ],
+          properties: [
+            for (final prop in cd.properties)
+              prop.copyWith(
+                nullable: !requiredNamesForUpdate.contains(prop.name),
+                optional: !requiredNamesForUpdate.contains(prop.name),
+              ),
+          ],
+        ),
+        _applyUpdateCode(cd, requiredNamesForUpdate),
+      ),
+    );
     return buf.toString();
   }
 }
