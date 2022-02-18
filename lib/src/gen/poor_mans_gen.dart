@@ -198,7 +198,41 @@ class PoorMansGen {
           buf.writeln(" == '1',");
           break;
         case _TypeType._map:
-          throw "Was to lazy to implement this for now - Similar to list if needed";
+          buf.write("${field.name}: ");
+          if (field.nullable) {
+            buf.write("m[k_${field.name}] == null ? null : ");
+          }
+
+          // assumes declarer never uses `Map`
+          final components = "${field.type}".split(RegExp(r"[<,>]"));
+          assert(components.length == 4, "Dont use `Map` without generic param");
+
+          final subTypeA = parseType(components[1]);
+          if (subTypeA != _TypeType._string) throw "Only String keys supported for now";
+
+          final subTypeB = parseType(components[2]);
+          switch (subTypeB) {
+            case _TypeType._string:
+              buf.writeln("(m[k_${field.name}] as Map).cast(),");
+              break;
+            case _TypeType._int:
+              buf.writeln("(m[k_${field.name}] as Map).map((k,v) => MapEntry(k as String, int.parse(v))),");
+              break;
+            case _TypeType._double:
+              buf.writeln("(m[k_${field.name}] as Map).map((k,v) => MapEntry(k as String, double.parse(v))),");
+              break;
+            case _TypeType._bool:
+              buf.writeln("(m[k_${field.name}] as Map).map((k,v) => MapEntry(k as String, v == '1')),");
+              break;
+            case _TypeType._map:
+            case _TypeType._list:
+              throw "Was to lazy to implement this for now";
+            case _TypeType._object:
+              final _type = components[1];
+              buf.writeln("(m[k_${field.name}] as List).map((e) => $_type.decode(e)).toList(),");
+              break;
+          }
+          break;
         case _TypeType._list:
           buf.write("${field.name}: ");
           if (field.nullable) {
@@ -211,11 +245,17 @@ class PoorMansGen {
           final subType = parseType(components[1]);
           switch (subType) {
             case _TypeType._string:
-            case _TypeType._int:
-            case _TypeType._double:
               buf.writeln("(m[k_${field.name}] as List).cast(),");
               break;
+            case _TypeType._int:
+              buf.writeln("(m[k_${field.name}] as List).cast<String>().map((e) => int.parse(e)).toList(),");
+              break;
+            case _TypeType._double:
+              buf.writeln("(m[k_${field.name}] as List).cast<String>().map((e) => double.parse(e)).toList(),");
+              break;
             case _TypeType._bool:
+              buf.writeln("(m[k_${field.name}] as List).cast<String>().map((e) => e == '1').toList(),");
+              break;
             case _TypeType._map:
             case _TypeType._list:
               throw "Was to lazy to implement this for now";
@@ -266,7 +306,38 @@ class PoorMansGen {
           buf.writeln("k_${field.name}: ${field.name}$excl ? '1' : '0',");
           break;
         case _TypeType._map:
-          throw "Too lazy for this rn - similar to list";
+          if (field.nullable) {
+            buf.write("if(${field.name} != null) ");
+          }
+          buf.write("k_${field.name}: ");
+
+          // assumes declarer never uses `Map`
+          final components = "${field.type}".split(RegExp(r"[<,>]"));
+          assert(components.length == 4, "Dont use `Map` without generic param");
+
+          final subTypeA = parseType(components[1]);
+          if (subTypeA != _TypeType._string) throw "Only String keys supported for now";
+
+          final subTypeB = parseType(components[2]);
+          switch (subTypeB) {
+            case _TypeType._string:
+              buf.writeln("${field.name}$excl,");
+              break;
+            case _TypeType._int:
+            case _TypeType._double:
+              buf.writeln("${field.name}$excl.map((k,v) => MapEntry(k,'\$v')),");
+              break;
+            case _TypeType._bool:
+              buf.writeln("${field.name}$excl.map((k,v) => MapEntry(k, v ? '1' : '0')),");
+              break;
+            case _TypeType._map:
+            case _TypeType._list:
+              throw "Was to lazy to implement this for now";
+            case _TypeType._object:
+              buf.write("${field.name}$excl.map((k,v) => MapEntry(k, v.encode()))),");
+              break;
+          }
+          break;
         case _TypeType._list:
           if (field.nullable) {
             buf.write("if(${field.name} != null) ");
@@ -286,7 +357,7 @@ class PoorMansGen {
               buf.writeln("${field.name}$excl.map((e) => '\$e').toList(),");
               break;
             case _TypeType._bool:
-              buf.writeln("${field.name}$excl ? '1' : '0',");
+              buf.writeln("${field.name}$excl.map((e) => e ? '1' : '0').toList(),");
               break;
             case _TypeType._map:
             case _TypeType._list:
@@ -343,7 +414,8 @@ class PoorMansGen {
     return buf.toString();
   }
 
-  static _TypeType parseType(String _type) {
+  static _TypeType parseType(String type) {
+    String _type = type.trim();
     if (_type.startsWith("List")) {
       return _TypeType._list;
     } else if (_type.startsWith("Map")) {
@@ -435,4 +507,9 @@ enum _TypeType {
   _map,
   _list,
   _object,
+}
+
+void main(List<String> args) {
+  Map<String, int> m = {};
+  m.map((k, v) => MapEntry(k, "$v"));
 }
