@@ -25,6 +25,9 @@ bool countNull(List params, int count) {
   return params.where((p) => p == null).length == count;
 }
 
+/// Check if [params] are all null, or all non-null
+bool allSameNull(List params) => allNull(params) || noneNull(params);
+
 //
 //
 //
