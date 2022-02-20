@@ -31,6 +31,13 @@ class PropertyDefinition {
 
   final List<String>? docString;
 
+  /// enum support is not very strong right now, the best results can be achieved my instead:
+  /// - keeping this false even for enums
+  /// - creating an extension for your enums `extension MyEnumX on MyEnum`
+  /// - that implement `Map encode()` and `static MyEnum decode(Map m)`
+  /// - changing the generated `MyEnum.decode` calls to `MyEnumX.decode` calls manually
+  final bool isEnum;
+
   PropertyDefinition({
     required this.type,
     this.typeDef,
@@ -40,6 +47,7 @@ class PropertyDefinition {
     this.defaultValue,
     this.key,
     this.docString,
+    this.isEnum = false,
   }) : assert(defaultValue != null || !(optional && !nullable));
 
   PropertyDefinition copyWith({
@@ -51,6 +59,7 @@ class PropertyDefinition {
     String? defaultValue,
     String? key,
     List<String>? docString,
+    bool? isEnum,
   }) {
     return PropertyDefinition(
       type: type ?? this.type,
@@ -61,6 +70,7 @@ class PropertyDefinition {
       defaultValue: defaultValue ?? this.defaultValue,
       key: key ?? this.key,
       docString: docString ?? this.docString,
+      isEnum: isEnum ?? this.isEnum,
     );
   }
 }
@@ -166,7 +176,7 @@ class PoorMansGen {
     buf.writeln("static ${cd.className} decode(Map m) => ${cd.className}(");
     // nullable - name - key - !!! DECODE obj / CAST lists + maps
     for (final field in cd.properties) {
-      final _type = parseType("${field.type}");
+      final _type = field.isEnum ? _TypeType._enum : parseType("${field.type}");
 
       switch (_type) {
         case _TypeType._string:
@@ -231,6 +241,7 @@ class PoorMansGen {
               final _type = components[1];
               buf.writeln("(m[k_${field.name}] as List).map((k,v) => MapEntry(k as String, $_type.decode(v))),");
               break;
+            // TODO cant have enum maps right now
             case _TypeType._enum:
               final _type = components[1];
               final _enum = _type.split('.').first;
@@ -269,6 +280,7 @@ class PoorMansGen {
               final _type = components[1];
               buf.writeln("(m[k_${field.name}] as List).map((e) => $_type.decode(e)).toList(),");
               break;
+            // TODO cant have enum lists right now
             case _TypeType._enum:
               final _type = components[1];
               final _enum = _type.split('.').first;
@@ -306,7 +318,7 @@ class PoorMansGen {
     buf.writeln("Map<String,Object> encode() => {");
     // nullable - key - name !!! ENCODE obj
     for (final field in cd.properties) {
-      final _type = parseType("${field.type}");
+      final _type = field.isEnum ? _TypeType._enum : parseType("${field.type}");
 
       final excl = field.nullable ? "!" : "";
 
@@ -356,6 +368,7 @@ class PoorMansGen {
             case _TypeType._object:
               buf.write("${field.name}$excl.map((k,v) => MapEntry(k, v.encode())),");
               break;
+            // TODO cant have enums in maps right now
             case _TypeType._enum:
               buf.write("${field.name}$excl.map((k,v) => MapEntry(k, v.index.toString())),");
               break;
@@ -388,6 +401,7 @@ class PoorMansGen {
             case _TypeType._object:
               buf.write("${field.name}$excl.map((e) => e.encode()).toList(),");
               break;
+            // TODO cant have enums in lists right now
             case _TypeType._enum:
               buf.write("${field.name}$excl.map((e) => '\${v.index}').toList(),");
               break;
@@ -446,6 +460,7 @@ class PoorMansGen {
     return buf.toString();
   }
 
+  // No way to check for enum, need an additional flag for that
   static _TypeType parseType(String type) {
     String _type = type.trim();
     if (_type.startsWith("List")) {
@@ -460,8 +475,6 @@ class PoorMansGen {
       return _TypeType._double;
     } else if (_type.startsWith("bool")) {
       return _TypeType._bool;
-    } else if (_type.contains(".")) {
-      return _TypeType._enum;
     } else {
       return _TypeType._object;
     }
