@@ -81,6 +81,7 @@ class ClassDefinition {
   final List<PropertyDefinition> properties;
   final List<String>? docString;
   final List<String>? imports;
+  final List<String>? asserts;
 
   /// Only supports extension of objects that dont take any parameters in their constructor; TODO for now at least
   final Type? extended;
@@ -88,6 +89,7 @@ class ClassDefinition {
   ClassDefinition({
     this.imports,
     this.docString,
+    this.asserts,
     required this.className,
     this.extended,
     required this.properties,
@@ -97,6 +99,7 @@ class ClassDefinition {
     String? className,
     List<PropertyDefinition>? properties,
     List<String>? docString,
+    List<String>? asserts,
     List<String>? imports,
     Type? extended,
   }) {
@@ -106,6 +109,7 @@ class ClassDefinition {
       docString: docString ?? this.docString,
       imports: imports ?? this.imports,
       extended: extended ?? this.extended,
+      asserts: asserts ?? this.asserts,
     );
   }
 }
@@ -169,7 +173,12 @@ class PoorMansGen {
     }
 
     // 4-RE) close constructor
-    buf.writeln("});");
+    buf.write("})");
+    if (cd.asserts?.isNotEmpty ?? false) {
+      buf.write(":");
+      buf.write(cd.asserts!.map((e) => "assert($e)").join(','));
+    }
+    buf.writeln(";");
     buf.writeln();
 
     // 5) generate decode from map
