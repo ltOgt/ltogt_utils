@@ -229,7 +229,13 @@ class PoorMansGen {
               throw "Was to lazy to implement this for now";
             case _TypeType._object:
               final _type = components[1];
-              buf.writeln("(m[k_${field.name}] as List).map((e) => $_type.decode(e)).toList(),");
+              buf.writeln("(m[k_${field.name}] as List).map((k,v) => MapEntry(k as String, $_type.decode(v))),");
+              break;
+            case _TypeType._enum:
+              final _type = components[1];
+              final _enum = _type.split('.').first;
+              buf.writeln(
+                  "(m[k_${field.name}] as List).map((k,v) => MapEntry(k as String, $_enum.values[int.parse(e)])),");
               break;
           }
           break;
@@ -263,6 +269,11 @@ class PoorMansGen {
               final _type = components[1];
               buf.writeln("(m[k_${field.name}] as List).map((e) => $_type.decode(e)).toList(),");
               break;
+            case _TypeType._enum:
+              final _type = components[1];
+              final _enum = _type.split('.').first;
+              buf.writeln("(m[k_${field.name}] as List).map((e) => $_enum.values[int.parse(e)]).toList(),");
+              break;
           }
           break;
         case _TypeType._object:
@@ -274,6 +285,15 @@ class PoorMansGen {
             buf.write(" ? null : ");
           }
           buf.writeln("$_type.decode(m[k_${field.name}]),");
+          break;
+        case _TypeType._enum:
+          final _enum = "${field.type}".split('.').first;
+          buf.write("${field.name}: ");
+          if (field.nullable) {
+            buf.writeln("(m[k_${field.name}] == null) //");
+            buf.write(" ? null : ");
+          }
+          buf.writeln("$_enum.values[int.parse(m[k_${field.name}]!)],");
           break;
       }
     }
@@ -334,7 +354,10 @@ class PoorMansGen {
             case _TypeType._list:
               throw "Was to lazy to implement this for now";
             case _TypeType._object:
-              buf.write("${field.name}$excl.map((k,v) => MapEntry(k, v.encode()))),");
+              buf.write("${field.name}$excl.map((k,v) => MapEntry(k, v.encode())),");
+              break;
+            case _TypeType._enum:
+              buf.write("${field.name}$excl.map((k,v) => MapEntry(k, v.index.toString())),");
               break;
           }
           break;
@@ -365,6 +388,9 @@ class PoorMansGen {
             case _TypeType._object:
               buf.write("${field.name}$excl.map((e) => e.encode()).toList(),");
               break;
+            case _TypeType._enum:
+              buf.write("${field.name}$excl.map((e) => '\${v.index}').toList(),");
+              break;
           }
           break;
         case _TypeType._object:
@@ -372,6 +398,12 @@ class PoorMansGen {
             buf.write("if(${field.name} != null) ");
           }
           buf.writeln("k_${field.name}: ${field.name}$excl.encode(),");
+          break;
+        case _TypeType._enum:
+          if (field.nullable) {
+            buf.write("if(${field.name} != null) ");
+          }
+          buf.writeln("k_${field.name}: ${field.name}$excl.index.toString(),");
           break;
       }
     }
@@ -428,6 +460,8 @@ class PoorMansGen {
       return _TypeType._double;
     } else if (_type.startsWith("bool")) {
       return _TypeType._bool;
+    } else if (_type.contains(".")) {
+      return _TypeType._enum;
     } else {
       return _TypeType._object;
     }
@@ -507,6 +541,7 @@ enum _TypeType {
   _map,
   _list,
   _object,
+  _enum,
 }
 
 void main(List<String> args) {
