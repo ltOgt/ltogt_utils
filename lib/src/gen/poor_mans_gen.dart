@@ -38,7 +38,7 @@ class PropertyDefinition {
   /// - changing the generated `MyEnum.decode` calls to `MyEnumX.decode` calls manually
   final bool isEnum;
 
-  PropertyDefinition({
+  const PropertyDefinition({
     required this.type,
     this.typeDef,
     this.nullable = false,
@@ -86,7 +86,7 @@ class ClassDefinition {
   /// Only supports extension of objects that dont take any parameters in their constructor; TODO for now at least
   final Type? extended;
 
-  ClassDefinition({
+  const ClassDefinition({
     this.imports,
     this.docString,
     this.asserts,
