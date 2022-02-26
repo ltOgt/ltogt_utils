@@ -329,13 +329,13 @@ class PoorMansGen {
               throw "Was to lazy to implement this for now";
             case _TypeType._object:
               final _type = components[1];
-              buf.writeln("(m[k_${field.name}] as List).map((e) => $_type.decode(e)).toList(),");
+              buf.writeln("(m[k_${field.name}] as Set).map((e) => $_type.decode(e)).toSet(),");
               break;
             // TODO cant have enum lists right now
             case _TypeType._enum:
               final _type = components[1];
               final _enum = _type.split('.').first;
-              buf.writeln("(m[k_${field.name}] as List).map((e) => $_enum.values[int.parse(e)]).toList(),");
+              buf.writeln("(m[k_${field.name}] as Set).map((e) => $_enum.values[int.parse(e)]).toSet(),");
               break;
           }
           break;
