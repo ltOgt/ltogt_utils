@@ -517,7 +517,7 @@ class PoorMansGen {
     buf.writeln("@override");
     buf.writeln("bool operator ==(Object other) {");
     buf.writeln("if (identical(this, other)) return true;");
-    if (cd.properties.any((p) => {_TypeType._list, _TypeType._map}.contains(parseType("${p.type}")))) {
+    if (cd.properties.any((p) => {_TypeType._list, _TypeType._map, _TypeType._set}.contains(parseType("${p.type}")))) {
       buf.writeln("final deepEquals = const DeepCollectionEquality().equals;");
     }
     buf.writeln("return other is ${cd.className}");
