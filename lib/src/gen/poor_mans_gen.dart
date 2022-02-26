@@ -116,6 +116,7 @@ class ClassDefinition {
 
 class PoorMansGen {
   /// WIP + dirty generator for BRIDGE-able and SMALLREAD-able classes
+  /// Has a lot of code duplication + failure cases, and if anyone but me reads this: DO NOT USE THIS!!!
   static String generateDataClass(ClassDefinition cd, [String? additionalCode]) {
     StringBuffer buf = StringBuffer();
 
@@ -244,6 +245,7 @@ class PoorMansGen {
               buf.writeln("(m[k_${field.name}] as Map).map((k,v) => MapEntry(k as String, v == '1')),");
               break;
             case _TypeType._map:
+            case _TypeType._set:
             case _TypeType._list:
               throw "Was to lazy to implement this for now";
             case _TypeType._object:
@@ -283,6 +285,46 @@ class PoorMansGen {
               buf.writeln("(m[k_${field.name}] as List).cast<String>().map((e) => e == '1').toList(),");
               break;
             case _TypeType._map:
+            case _TypeType._set:
+            case _TypeType._list:
+              throw "Was to lazy to implement this for now";
+            case _TypeType._object:
+              final _type = components[1];
+              buf.writeln("(m[k_${field.name}] as List).map((e) => $_type.decode(e)).toList(),");
+              break;
+            // TODO cant have enum lists right now
+            case _TypeType._enum:
+              final _type = components[1];
+              final _enum = _type.split('.').first;
+              buf.writeln("(m[k_${field.name}] as List).map((e) => $_enum.values[int.parse(e)]).toList(),");
+              break;
+          }
+          break;
+        case _TypeType._set:
+          buf.write("${field.name}: ");
+          if (field.nullable) {
+            buf.write("m[k_${field.name}] == null ? null : ");
+          }
+
+          // assumes declarer never uses `Set<dynamic>` or `Set`
+          final components = "${field.type}".split(RegExp(r"[<>]"));
+          assert(components.length > 1, "Dont use `Set` without generic param");
+          final subType = parseType(components[1]);
+          switch (subType) {
+            case _TypeType._string:
+              buf.writeln("(m[k_${field.name}] as Set).cast(),");
+              break;
+            case _TypeType._int:
+              buf.writeln("(m[k_${field.name}] as Set).cast<String>().map((e) => int.parse(e)).toSet(),");
+              break;
+            case _TypeType._double:
+              buf.writeln("(m[k_${field.name}] as Set).cast<String>().map((e) => double.parse(e)).toSet(),");
+              break;
+            case _TypeType._bool:
+              buf.writeln("(m[k_${field.name}] as Set).cast<String>().map((e) => e == '1').toSet(),");
+              break;
+            case _TypeType._map:
+            case _TypeType._set:
             case _TypeType._list:
               throw "Was to lazy to implement this for now";
             case _TypeType._object:
@@ -372,6 +414,7 @@ class PoorMansGen {
               buf.writeln("${field.name}$excl.map((k,v) => MapEntry(k, v ? '1' : '0')),");
               break;
             case _TypeType._map:
+            case _TypeType._set:
             case _TypeType._list:
               throw "Was to lazy to implement this for now";
             case _TypeType._object:
@@ -405,6 +448,7 @@ class PoorMansGen {
               buf.writeln("${field.name}$excl.map((e) => e ? '1' : '0').toList(),");
               break;
             case _TypeType._map:
+            case _TypeType._set:
             case _TypeType._list:
               throw "Was to lazy to implement this for now";
             case _TypeType._object:
@@ -413,6 +457,40 @@ class PoorMansGen {
             // TODO cant have enums in lists right now
             case _TypeType._enum:
               buf.write("${field.name}$excl.map((e) => '\${v.index}').toList(),");
+              break;
+          }
+          break;
+        case _TypeType._set:
+          if (field.nullable) {
+            buf.write("if(${field.name} != null) ");
+          }
+          buf.write("k_${field.name}: ");
+
+          // assumes declarer never uses `Set<dynamic>` or `Set`
+          final components = "${field.type}".split(RegExp(r"[<>]"));
+          assert(components.length > 1, "Dont use `Set` without generic param");
+          final subType = parseType(components[1]);
+          switch (subType) {
+            case _TypeType._string:
+              buf.writeln("${field.name}$excl,");
+              break;
+            case _TypeType._int:
+            case _TypeType._double:
+              buf.writeln("${field.name}$excl.map((e) => '\$e').toSet(),");
+              break;
+            case _TypeType._bool:
+              buf.writeln("${field.name}$excl.map((e) => e ? '1' : '0').toSet(),");
+              break;
+            case _TypeType._map:
+            case _TypeType._set:
+            case _TypeType._list:
+              throw "Was to lazy to implement this for now";
+            case _TypeType._object:
+              buf.write("${field.name}$excl.map((e) => e.encode()).toSet(),");
+              break;
+            // TODO cant have enums in sets right now
+            case _TypeType._enum:
+              buf.write("${field.name}$excl.map((e) => '\${v.index}').toSet(),");
               break;
           }
           break;
@@ -474,6 +552,8 @@ class PoorMansGen {
     String _type = type.trim();
     if (_type.startsWith("List")) {
       return _TypeType._list;
+    } else if (_type.startsWith("Set")) {
+      return _TypeType._set;
     } else if (_type.startsWith("Map")) {
       return _TypeType._map;
     } else if (_type.startsWith("String")) {
@@ -562,6 +642,7 @@ enum _TypeType {
   _bool,
   _map,
   _list,
+  _set,
   _object,
   _enum,
 }
