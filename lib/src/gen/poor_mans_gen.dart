@@ -523,7 +523,7 @@ class PoorMansGen {
     buf.writeln("return other is ${cd.className}");
     for (final prop in cd.properties) {
       buf.write("&& ");
-      if ({_TypeType._list, _TypeType._map}.contains(parseType("${prop.type}"))) {
+      if ({_TypeType._list, _TypeType._map, _TypeType._set}.contains(parseType("${prop.type}"))) {
         buf.writeln("deepEquals(other.${prop.name}, ${prop.name})");
       } else {
         buf.writeln("other.${prop.name} == ${prop.name}");
