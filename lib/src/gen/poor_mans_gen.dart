@@ -102,13 +102,14 @@ class ClassDefinition {
     List<String>? asserts,
     List<String>? imports,
     Type? extended,
+    bool removeExtended = false,
   }) {
     return ClassDefinition(
       className: className ?? this.className,
       properties: properties ?? this.properties,
       docString: docString ?? this.docString,
       imports: imports ?? this.imports,
-      extended: extended ?? this.extended,
+      extended: (removeExtended) ? null : extended ?? this.extended,
       asserts: asserts ?? this.asserts,
     );
   }
@@ -615,6 +616,7 @@ class PoorMansGen {
         cd.copyWith(
           imports: [],
           className: cd.className + "Update",
+          removeExtended: true,
           docString: [
             "Generated Updater for [${cd.className}]",
             "Contains the same fields, only made nullable",
