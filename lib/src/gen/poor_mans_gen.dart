@@ -81,10 +81,16 @@ class ClassDefinition {
   final List<PropertyDefinition> properties;
   final List<String>? docString;
   final List<String>? imports;
+
+  /// Each string in here will be wrapped with "assert(<s>)" inside the constructor body
   final List<String>? asserts;
 
   /// Only supports extension of objects that dont take any parameters in their constructor; TODO for now at least
   final Type? extended;
+
+  /// Strings in here are inserted as is below the fields:
+  /// § "bool get isError => error != null;"
+  final List<String> getters;
 
   const ClassDefinition({
     this.imports,
@@ -93,6 +99,7 @@ class ClassDefinition {
     required this.className,
     this.extended,
     required this.properties,
+    this.getters = const [],
   });
 
   ClassDefinition copyWith({
@@ -103,6 +110,7 @@ class ClassDefinition {
     List<String>? imports,
     Type? extended,
     bool removeExtended = false,
+    List<String>? getters,
   }) {
     return ClassDefinition(
       className: className ?? this.className,
@@ -111,6 +119,7 @@ class ClassDefinition {
       imports: imports ?? this.imports,
       extended: (removeExtended) ? null : extended ?? this.extended,
       asserts: asserts ?? this.asserts,
+      getters: getters ?? this.getters,
     );
   }
 }
@@ -155,6 +164,12 @@ class PoorMansGen {
       // key
       buf.writeln('static const String k_${field.name} = "${field.key ?? field.name}";');
     }
+
+    // 3.2) insert getters if any
+    for (final getter in cd.getters) {
+      buf.writeln(getter);
+    }
+    buf.writeln();
 
     // 4) generate constructor
     // name
