@@ -100,14 +100,16 @@ class FileTreeDir extends FileTreeEntity {
         name: m[key_name]!,
         dirs: ((m[key_dirs] ?? []) as List<dynamic>).map((dir) => FileTreeDir.decode(dir)).toList(),
         files: ((m[key_files] ?? []) as List<dynamic>).map((file) => FileTreeFile.decode(file)).toList(),
-        lastChange: m[key_lastChange] == null ? null : DateTime.fromMillisecondsSinceEpoch(m[key_lastChange]),
+        lastChange: m[key_lastChange] == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(int.parse(m[key_lastChange] as String)),
       );
 
   Map encode() => {
         key_name: name,
         key_dirs: dirs.map((dir) => dir.encode()).toList(),
         key_files: files.map((file) => file.encode()).toList(),
-        if (lastChange != null) key_lastChange: lastChange!.millisecondsSinceEpoch,
+        if (lastChange != null) key_lastChange: lastChange!.millisecondsSinceEpoch.toString(),
       };
 
   @override
