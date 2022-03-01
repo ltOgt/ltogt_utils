@@ -164,6 +164,7 @@ class PoorMansGen {
       // key
       buf.writeln('static const String k_${field.name} = "${field.key ?? field.name}";');
     }
+    buf.writeln();
 
     // 3.2) insert getters if any
     for (final getter in cd.getters) {
@@ -173,7 +174,6 @@ class PoorMansGen {
 
     // 4) generate constructor
     // name
-    buf.writeln();
     buf.writeln("const ${cd.className}({");
 
     // 4.1) genearte fields
