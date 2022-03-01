@@ -88,6 +88,8 @@ class ClassDefinition {
   /// Only supports extension of objects that dont take any parameters in their constructor; TODO for now at least
   final Type? extended;
 
+  final bool isConst;
+
   /// Strings in here are inserted as is below the fields:
   /// § "bool get isError => error != null;"
   final List<String> getters;
@@ -100,6 +102,7 @@ class ClassDefinition {
     this.extended,
     required this.properties,
     this.getters = const [],
+    this.isConst = true,
   });
 
   ClassDefinition copyWith({
@@ -111,6 +114,7 @@ class ClassDefinition {
     Type? extended,
     bool removeExtended = false,
     List<String>? getters,
+    bool? isConst,
   }) {
     return ClassDefinition(
       className: className ?? this.className,
@@ -120,6 +124,7 @@ class ClassDefinition {
       extended: (removeExtended) ? null : extended ?? this.extended,
       asserts: asserts ?? this.asserts,
       getters: getters ?? this.getters,
+      isConst: isConst ?? this.isConst,
     );
   }
 }
@@ -174,7 +179,8 @@ class PoorMansGen {
 
     // 4) generate constructor
     // name
-    buf.writeln("const ${cd.className}({");
+    if (cd.isConst) buf.write("const ");
+    buf.writeln("${cd.className}({");
 
     // 4.1) genearte fields
     // required - name - default
