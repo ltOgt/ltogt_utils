@@ -591,7 +591,7 @@ class PoorMansGen {
     }
   }
 
-  static String _applyUpdateCode(ClassDefinition base, Set<String> requiredNamesForUpdate) {
+  static String _applyUpdateCode(ClassDefinition base, Set<String> constantIdentifiers, Set<String> unchangable) {
     StringBuffer buf = StringBuffer();
 
     /**
@@ -605,20 +605,26 @@ class PoorMansGen {
       file: file ?? handle.file,
       chunks: chunks ?? handle.chunks,
       relations: relations ?? handle.relations,
+      unchanged: handle.unchanged,
     );
   }
      */
     buf.writeln("${base.className} apply(${base.className} base) {");
-    for (final req in requiredNamesForUpdate) {
+    for (final req in constantIdentifiers) {
       buf.writeln("assert(base.$req == $req);");
     }
     buf.writeln("return ${base.className}(");
     for (final prop in base.properties) {
-      if (requiredNamesForUpdate.contains(prop.name)) {
-        buf.writeln("${prop.name}: ${prop.name},");
-      } else {
-        buf.writeln("${prop.name}: ${prop.name} ?? base.${prop.name},");
+      if (!unchangable.contains(prop.name)) {
+        if (constantIdentifiers.contains(prop.name)) {
+          buf.writeln("${prop.name}: ${prop.name},");
+        } else {
+          buf.writeln("${prop.name}: ${prop.name} ?? base.${prop.name},");
+        }
       }
+    }
+    for (final name in unchangable) {
+      buf.writeln("${name}: base.${name},");
     }
     buf.writeln(");}");
 
@@ -626,8 +632,16 @@ class PoorMansGen {
   }
 
   /// Generates once for the actual [cd] and another time for the "Update" version.
-  /// The update version will have all fields become nullable, unless their name is contained in [requiredNamesForUpdate].
-  static String generateDataClassWithUpdater(ClassDefinition cd, Set<String> requiredNamesForUpdate) {
+  ///
+  /// The update version will have all fields become nullable, apart from those whos name is contained in
+  ///
+  /// - [constantIdentifiers]: Must be supplied, may not differ from the class that should be updated
+  /// - [unchangable]: Can not be supplied, will be taken from the class that should be updated
+  static String generateDataClassWithUpdater({
+    required ClassDefinition cd,
+    required Set<String> constantIdentifiers,
+    required Set<String> unchangeable,
+  }) {
     StringBuffer buf = StringBuffer();
     buf.write(generateDataClass(cd));
     buf.writeln();
@@ -645,13 +659,14 @@ class PoorMansGen {
           ],
           properties: [
             for (final prop in cd.properties)
-              prop.copyWith(
-                nullable: !requiredNamesForUpdate.contains(prop.name),
-                optional: !requiredNamesForUpdate.contains(prop.name),
-              ),
+              if (!unchangeable.contains(prop.name))
+                prop.copyWith(
+                  nullable: !constantIdentifiers.contains(prop.name),
+                  optional: !constantIdentifiers.contains(prop.name),
+                ),
           ],
         ),
-        _applyUpdateCode(cd, requiredNamesForUpdate),
+        _applyUpdateCode(cd, constantIdentifiers, unchangeable),
       ),
     );
     return buf.toString();
