@@ -86,7 +86,7 @@ class ClassDefinition {
   final List<String>? asserts;
 
   /// Only supports extension of objects that dont take any parameters in their constructor; TODO for now at least
-  final Type? extended;
+  final String? extended;
 
   final bool isConst;
 
@@ -111,7 +111,7 @@ class ClassDefinition {
     List<String>? docString,
     List<String>? asserts,
     List<String>? imports,
-    Type? extended,
+    String? extended,
     bool removeExtended = false,
     List<String>? getters,
     bool? isConst,
@@ -631,45 +631,37 @@ class PoorMansGen {
     return buf.toString();
   }
 
-  /// Generates once for the actual [cd] and another time for the "Update" version.
-  ///
-  /// The update version will have all fields become nullable, apart from those whos name is contained in
-  ///
-  /// - [constantIdentifiers]: Must be supplied, may not differ from the class that should be updated
-  /// - [unchangable]: Can not be supplied, will be taken from the class that should be updated
-  static String generateDataClassWithUpdater({
+  static String generateUpdater({
     required ClassDefinition cd,
     required Set<String> constantIdentifiers,
     required Set<String> unchangeable,
+    String namePostfix = "Update",
+    List<String>? docString,
+    String? extended,
   }) {
-    StringBuffer buf = StringBuffer();
-    buf.write(generateDataClass(cd));
-    buf.writeln();
-    buf.writeln();
-    buf.write(
-      generateDataClass(
-        cd.copyWith(
-          imports: [],
-          className: cd.className + "Update",
-          removeExtended: true,
-          docString: [
-            "Generated Updater for [${cd.className}]",
-            "Contains the same fields, only made nullable",
-            "This is useful since we might only want to change a single value",
-          ],
-          properties: [
-            for (final prop in cd.properties)
-              if (!unchangeable.contains(prop.name))
-                prop.copyWith(
-                  nullable: !constantIdentifiers.contains(prop.name),
-                  optional: !constantIdentifiers.contains(prop.name),
-                ),
-          ],
-        ),
-        _applyUpdateCode(cd, constantIdentifiers, unchangeable),
+    return generateDataClass(
+      cd.copyWith(
+        imports: [],
+        className: cd.className + namePostfix,
+        removeExtended: extended == null,
+        extended: extended,
+        docString: docString ??
+            [
+              "Generated $namePostfix object for [${cd.className}]",
+              "Contains the same fields, only made nullable",
+              "This is useful since we might only want to change a single value",
+            ],
+        properties: [
+          for (final prop in cd.properties)
+            if (!unchangeable.contains(prop.name))
+              prop.copyWith(
+                nullable: !constantIdentifiers.contains(prop.name),
+                optional: !constantIdentifiers.contains(prop.name),
+              ),
+        ],
       ),
+      _applyUpdateCode(cd, constantIdentifiers, unchangeable),
     );
-    return buf.toString();
   }
 }
 
