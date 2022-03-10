@@ -86,7 +86,7 @@ class FileTreeHelper {
     List<String> pathSegments = fileTreePath.segments;
     try {
       if (fileTree.rootDir.name != pathSegments.first) {
-        throw Exception("Does not start at [rootDir]");
+        throw Exception("Does not start at [$rootDir]");
       }
 
       FileTreeDir currentDir = fileTree.rootDir;
@@ -98,7 +98,7 @@ class FileTreeHelper {
       // Throws StateError if no file matching the segment is found
       currentDir.files.firstWhere((file) => file.name == pathSegments.last);
     } catch (e) {
-      throw Exception("Invalid [fileTreePath]: $e");
+      throw Exception("Invalid [$fileTreePath]: $e");
     }
 
     // Path segments are valid and can be joined to create a file path

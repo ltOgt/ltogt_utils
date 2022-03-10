@@ -13,4 +13,9 @@ class FileTreePath {
   List<String> encode() => segments;
 
   static FileTreePath decode(List<dynamic> l) => FileTreePath(l.cast());
+
+  @override
+  String toString() {
+    return "[${segments.join(',')}]";
+  }
 }
