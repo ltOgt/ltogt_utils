@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:ltogt_utils/src/file/file_tree/file_tree.dart';
 
 /// A path constructed from [FileTree]
@@ -18,4 +19,15 @@ class FileTreePath {
   String toString() {
     return "[${segments.join(',')}]";
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    final listEquals = const DeepCollectionEquality().equals;
+
+    return other is FileTreePath && listEquals(other.segments, segments);
+  }
+
+  @override
+  int get hashCode => segments.hashCode;
 }
