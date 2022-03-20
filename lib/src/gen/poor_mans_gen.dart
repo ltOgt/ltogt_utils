@@ -250,36 +250,41 @@ class PoorMansGen {
           assert(components.length == 4, "Dont use `Map` without generic param");
 
           final subTypeA = parseType(components[1]);
-          if (subTypeA != _TypeType._string) throw "Only String keys supported for now";
+          if (false == (subTypeA.isString || subTypeA.isObject)) {
+            throw "Only String or Object keys supported for now";
+          }
+          final _keyDecode = (subTypeA.isString) //
+              ? "k as String"
+              : "${components[1]}.decode(k as String)";
 
           final subTypeB = parseType(components[2]);
           switch (subTypeB) {
             case _TypeType._string:
-              buf.writeln("(m[k_${field.name}] as Map).cast(),");
+              buf.writeln("(m[k_${field.name}] as Map).map((k,v) => MapEntry($_keyDecode, v)),");
               break;
             case _TypeType._int:
-              buf.writeln("(m[k_${field.name}] as Map).map((k,v) => MapEntry(k as String, int.parse(v))),");
+              buf.writeln("(m[k_${field.name}] as Map).map((k,v) => MapEntry($_keyDecode, int.parse(v))),");
               break;
             case _TypeType._double:
-              buf.writeln("(m[k_${field.name}] as Map).map((k,v) => MapEntry(k as String, double.parse(v))),");
+              buf.writeln("(m[k_${field.name}] as Map).map((k,v) => MapEntry($_keyDecode, double.parse(v))),");
               break;
             case _TypeType._bool:
-              buf.writeln("(m[k_${field.name}] as Map).map((k,v) => MapEntry(k as String, v == '1')),");
+              buf.writeln("(m[k_${field.name}] as Map).map((k,v) => MapEntry($_keyDecode, v == '1')),");
               break;
             case _TypeType._map:
             case _TypeType._set:
             case _TypeType._list:
               throw "Was to lazy to implement this for now";
             case _TypeType._object:
-              final _type = components[1];
-              buf.writeln("(m[k_${field.name}] as List).map((k,v) => MapEntry(k as String, $_type.decode(v))),");
+              final _type = components[2];
+              buf.writeln("(m[k_${field.name}] as Map).map((k,v) => MapEntry($_keyDecode, $_type.decode(v))),");
               break;
             // TODO cant have enum maps right now
             case _TypeType._enum:
               final _type = components[1];
               final _enum = _type.split('.').first;
               buf.writeln(
-                  "(m[k_${field.name}] as List).map((k,v) => MapEntry(k as String, $_enum.values[int.parse(e)])),");
+                  "(m[k_${field.name}] as Map).map((k,v) => MapEntry($_keyDecode, $_enum.values[int.parse(e)])),");
               break;
           }
           break;
@@ -421,30 +426,35 @@ class PoorMansGen {
           assert(components.length == 4, "Dont use `Map` without generic param");
 
           final subTypeA = parseType(components[1]);
-          if (subTypeA != _TypeType._string) throw "Only String keys supported for now";
+          if (false == (subTypeA.isString || subTypeA.isObject)) {
+            throw "Only String or Object keys supported for now";
+          }
+          final _keyEncode = (subTypeA.isString) //
+              ? "k"
+              : "k.encode()";
 
           final subTypeB = parseType(components[2]);
           switch (subTypeB) {
             case _TypeType._string:
-              buf.writeln("${field.name}$excl,");
+              buf.writeln("${field.name}$excl.map((k,v) => MapEntry($_keyEncode, v')),");
               break;
             case _TypeType._int:
             case _TypeType._double:
-              buf.writeln("${field.name}$excl.map((k,v) => MapEntry(k,'\$v')),");
+              buf.writeln("${field.name}$excl.map((k,v) => MapEntry($_keyEncode, '\$v')),");
               break;
             case _TypeType._bool:
-              buf.writeln("${field.name}$excl.map((k,v) => MapEntry(k, v ? '1' : '0')),");
+              buf.writeln("${field.name}$excl.map((k,v) => MapEntry($_keyEncode, v ? '1' : '0')),");
               break;
             case _TypeType._map:
             case _TypeType._set:
             case _TypeType._list:
               throw "Was to lazy to implement this for now";
             case _TypeType._object:
-              buf.write("${field.name}$excl.map((k,v) => MapEntry(k, v.encode())),");
+              buf.write("${field.name}$excl.map((k,v) => MapEntry($_keyEncode, v.encode())),");
               break;
             // TODO cant have enums in maps right now
             case _TypeType._enum:
-              buf.write("${field.name}$excl.map((k,v) => MapEntry(k, v.index.toString())),");
+              buf.write("${field.name}$excl.map((k,v) => MapEntry($_keyEncode, v.index.toString())),");
               break;
           }
           break;
@@ -675,6 +685,18 @@ enum _TypeType {
   _set,
   _object,
   _enum,
+}
+
+extension _TypeTypeX on _TypeType {
+  bool get isString => this == _TypeType._string;
+  bool get isInt => this == _TypeType._int;
+  bool get isDouble => this == _TypeType._double;
+  bool get isBool => this == _TypeType._bool;
+  bool get isMap => this == _TypeType._map;
+  bool get isList => this == _TypeType._list;
+  bool get isSet => this == _TypeType._set;
+  bool get isObject => this == _TypeType._object;
+  bool get isEnum => this == _TypeType._enum;
 }
 
 void main(List<String> args) {
