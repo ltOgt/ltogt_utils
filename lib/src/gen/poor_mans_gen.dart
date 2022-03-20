@@ -180,7 +180,10 @@ class PoorMansGen {
     // 4) generate constructor
     // name
     if (cd.isConst) buf.write("const ");
-    buf.writeln("${cd.className}({");
+    buf.writeln("${cd.className}(");
+    if (cd.properties.isNotEmpty) {
+      buf.writeln("{");
+    }
 
     // 4.1) genearte fields
     // required - name - default
@@ -196,7 +199,10 @@ class PoorMansGen {
     }
 
     // 4-RE) close constructor
-    buf.write("})");
+    if (cd.properties.isNotEmpty) {
+      buf.writeln("}");
+    }
+    buf.write(")");
     if (cd.asserts?.isNotEmpty ?? false) {
       buf.write(":");
       buf.write(cd.asserts!.map((e) => "assert($e)").join(','));
@@ -567,7 +573,12 @@ class PoorMansGen {
     // 8) hash code
     buf.writeln("@override");
     buf.writeln("int get hashCode {");
-    buf.writeln("return ${cd.properties.map((p) => p.name + ".hashCode").join(' ^ ')};");
+    if (cd.properties.isEmpty) {
+      buf.writeln("return 0;");
+    } else {
+      buf.writeln("return ${cd.properties.map((p) => p.name + ".hashCode").join(' ^ ')};");
+    }
+
     buf.writeln("}");
 
     // - additional code if any
