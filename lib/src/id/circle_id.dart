@@ -5,7 +5,7 @@ class CircleIdGen {
 
   CircleIdGen();
 
-  CircleId get next => CircleId(DateTime.now().toIso8601String() + (_circle++ % _circleMax).toString());
+  CircleId get next => CircleId(DateTime.now().toIso8601String() + "c" + (_circle++ % _circleMax).toString());
 }
 
 class CircleId {
