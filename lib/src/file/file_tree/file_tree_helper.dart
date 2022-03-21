@@ -2,9 +2,6 @@ import 'dart:io';
 
 import 'package:ltogt_utils/ltogt_utils.dart';
 
-import 'file_tree.dart';
-import 'file_tree_path.dart';
-
 class FileTreeHelper {
   FileTreeHelper._();
 

@@ -26,7 +26,7 @@ class FileTree {
   static const String key_rootDir = "rootDir";
   final FileTreeDir rootDir;
 
-  FileTree({
+  const FileTree({
     required this.rootDir,
   });
 
@@ -51,6 +51,7 @@ class FileTree {
 }
 
 abstract class FileTreeEntity {
+  const FileTreeEntity();
   String get name;
   bool get isDir => this is FileTreeDir;
   bool get isFile => this is FileTreeFile;
@@ -89,7 +90,7 @@ class FileTreeDir extends FileTreeEntity {
   static const String key_files = "files";
   final List<FileTreeFile> files;
 
-  FileTreeDir({
+  const FileTreeDir({
     required this.name,
     this.dirs = const [],
     this.files = const [],
@@ -126,7 +127,8 @@ class FileTreeDir extends FileTreeEntity {
 
   @override
   int get hashCode {
-    return name.hashCode ^ lastChange.hashCode ^ dirs.hashCode ^ files.hashCode;
+    final listHash = const DeepCollectionEquality().hash;
+    return name.hashCode ^ lastChange.hashCode ^ listHash(dirs) ^ listHash(files);
   }
 }
 
@@ -142,7 +144,7 @@ class FileTreeFile extends FileTreeEntity {
   static const key_lastChange = "lc";
   final DateTime? lastChange;
 
-  FileTreeFile({
+  const FileTreeFile({
     required this.name,
     this.lastChange,
   });

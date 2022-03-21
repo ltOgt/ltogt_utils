@@ -7,7 +7,7 @@ import 'package:ltogt_utils/src/file/file_tree/file_tree.dart';
 class FileTreePath {
   final List<String> segments;
 
-  FileTreePath(this.segments);
+  const FileTreePath(this.segments);
 
   void addSegment(FileTreeEntity e) => this.segments.add(e.name);
 
