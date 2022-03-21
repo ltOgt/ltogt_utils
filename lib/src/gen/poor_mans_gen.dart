@@ -447,7 +447,11 @@ class PoorMansGen {
           final subTypeB = parseType(components[2]);
           switch (subTypeB) {
             case _TypeType._string:
-              buf.writeln("${field.name}$excl.map((k,v) => MapEntry($_keyEncode, v')),");
+              if (subTypeA.isString) {
+                buf.writeln("${field.name}$excl,");
+              } else {
+                buf.writeln("${field.name}$excl.map((k,v) => MapEntry($_keyEncode, v)),");
+              }
               break;
             case _TypeType._int:
             case _TypeType._double:
