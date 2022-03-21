@@ -122,14 +122,14 @@ class ClassDefinition {
     bool? hasCopyWith,
   }) {
     return ClassDefinition(
-      className: className ?? this.className,
-      properties: properties ?? this.properties,
-      docString: docString ?? this.docString,
-      imports: imports ?? this.imports,
-      extended: (removeExtended) ? null : extended ?? this.extended,
-      asserts: asserts ?? this.asserts,
-      getters: getters ?? this.getters,
-      isConst: isConst ?? this.isConst,
+        className: className ?? this.className,
+        properties: properties ?? this.properties,
+        docString: docString ?? this.docString,
+        imports: imports ?? this.imports,
+        extended: (removeExtended) ? null : extended ?? this.extended,
+        asserts: asserts ?? this.asserts,
+        getters: getters ?? this.getters,
+        isConst: isConst ?? this.isConst,
         hasCopyWith: hasCopyWith ?? this.hasCopyWith);
   }
 }
@@ -581,7 +581,20 @@ class PoorMansGen {
     if (cd.properties.isEmpty) {
       buf.writeln("return 0;");
     } else {
-      buf.writeln("return ${cd.properties.map((p) => p.name + ".hashCode").join(' ^ ')};");
+      if (cd.properties
+          .any((p) => {_TypeType._list, _TypeType._map, _TypeType._set}.contains(parseType("${p.type}")))) {
+        buf.writeln("final deepHash = const DeepCollectionEquality().hash;");
+      }
+      buf.writeln("return ");
+      buf.writeln([
+        for (final prop in cd.properties)
+          if ({_TypeType._list, _TypeType._map, _TypeType._set}.contains(parseType("${prop.type}"))) ...[
+            "deepHash(${prop.name})"
+          ] else ...[
+            prop.name + ".hashCode"
+          ]
+      ].join(' ^ '));
+      buf.writeln(";");
     }
 
     buf.writeln("}");
