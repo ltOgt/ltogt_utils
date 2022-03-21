@@ -1,4 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:collection/collection.dart';
+
 import 'package:ltogt_utils/src/file/file_tree/file_tree.dart';
 
 /// A path constructed from [FileTree]
@@ -29,5 +31,8 @@ class FileTreePath {
   }
 
   @override
-  int get hashCode => segments.hashCode;
+  int get hashCode {
+    final listHash = const DeepCollectionEquality().hash;
+    return listHash(segments);
+  }
 }
