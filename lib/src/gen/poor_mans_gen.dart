@@ -94,6 +94,9 @@ class ClassDefinition {
   /// § "bool get isError => error != null;"
   final List<String> getters;
 
+  /// Whether to generate "copyWith" for this class
+  final bool hasCopyWith;
+
   const ClassDefinition({
     this.imports,
     this.docString,
@@ -103,6 +106,7 @@ class ClassDefinition {
     required this.properties,
     this.getters = const [],
     this.isConst = true,
+    this.hasCopyWith = false,
   });
 
   ClassDefinition copyWith({
@@ -115,6 +119,7 @@ class ClassDefinition {
     bool removeExtended = false,
     List<String>? getters,
     bool? isConst,
+    bool? hasCopyWith,
   }) {
     return ClassDefinition(
       className: className ?? this.className,
@@ -125,7 +130,7 @@ class ClassDefinition {
       asserts: asserts ?? this.asserts,
       getters: getters ?? this.getters,
       isConst: isConst ?? this.isConst,
-    );
+        hasCopyWith: hasCopyWith ?? this.hasCopyWith);
   }
 }
 
@@ -580,6 +585,38 @@ class PoorMansGen {
     }
 
     buf.writeln("}");
+
+    // 8) generate copyWith if desired
+    if (cd.hasCopyWith && cd.properties.isNotEmpty) {
+      // open params
+      buf.writeln("${cd.className} copyWith({");
+      // write params
+      for (final prop in cd.properties) {
+        buf.writeln("${prop.typeDef ?? prop.type}? ${prop.name},");
+        // add "bool removeMyVar = false" to reset nullables
+        if (prop.nullable) {
+          final firstChar = String.fromCharCode(prop.name.codeUnitAt(0));
+          final rest = String.fromCharCodes(prop.name.codeUnits.skip(1));
+          buf.writeln("bool remove${firstChar.toUpperCase()}${rest} = false,");
+        }
+      }
+      // close params + open creation
+      buf.writeln("}) => ${cd.className}(");
+      // write params
+      for (final prop in cd.properties) {
+        buf.writeln("${prop.name}: ");
+        // add "(removeMyVar) ? null : " to reset nullables
+        String removeVar = "";
+        if (prop.nullable) {
+          final firstChar = String.fromCharCode(prop.name.codeUnitAt(0));
+          final rest = String.fromCharCodes(prop.name.codeUnits.skip(1));
+          removeVar = "(remove${firstChar.toUpperCase()}${rest}) ? null : ";
+        }
+        buf.writeln("$removeVar${prop.name} ?? this.${prop.name},");
+      }
+      // close creation
+      buf.writeln(");");
+    }
 
     // - additional code if any
     if (additionalCode != null) buf.writeln(additionalCode);
