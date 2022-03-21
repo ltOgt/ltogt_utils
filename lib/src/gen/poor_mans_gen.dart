@@ -265,13 +265,17 @@ class PoorMansGen {
             throw "Only String or Object keys supported for now";
           }
           final _keyDecode = (subTypeA.isString) //
-              ? "k as String"
-              : "${components[1]}.decode(k as String)";
+              ? "k"
+              : "${components[1]}.decode(k)";
 
           final subTypeB = parseType(components[2]);
           switch (subTypeB) {
             case _TypeType._string:
-              buf.writeln("(m[k_${field.name}] as Map).map((k,v) => MapEntry($_keyDecode, v)),");
+              if (subTypeA.isString) {
+                buf.writeln("(m[k_${field.name}] as Map).cast(),");
+              } else {
+                buf.writeln("(m[k_${field.name}] as Map).map((k,v) => MapEntry($_keyDecode, v)),");
+              }
               break;
             case _TypeType._int:
               buf.writeln("(m[k_${field.name}] as Map).map((k,v) => MapEntry($_keyDecode, int.parse(v))),");
