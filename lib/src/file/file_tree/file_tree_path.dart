@@ -22,6 +22,8 @@ class FileTreePath {
     return "[${segments.join(',')}]";
   }
 
+  String asFilePath() => segments.join('/');
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
