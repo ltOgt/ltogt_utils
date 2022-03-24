@@ -67,6 +67,24 @@ class FileTreeHelper {
     );
   }
 
+  static FileTreePath fileTreePathFromPathIfValid({
+    required FileTree fileTree,
+    required Directory rootDir,
+    required String path,
+  }) {
+    final split = path.split(rootDir.parent.path + "/");
+    if (split.length != 2) throw Exception("Path does not enter tree root");
+    //final outside = split[0];
+    final inside = split[1];
+
+    final fileTreePath = FileTreePath(inside.split('/'));
+    // TODO must be cleaned up, this is just a dirty reuse for verification
+    final verify = pathFromFileTreePathIfValid(fileTree: fileTree, rootDir: rootDir, fileTreePath: fileTreePath);
+    if (verify != path) throw "Invalid path";
+
+    return fileTreePath;
+  }
+
   /// Use [fileTree] (created via [createFileTree]) to validate [fileTreePath].
   ///
   /// [fileTreePath] is valid in accordance to the construction performed by [createFileDir]:
