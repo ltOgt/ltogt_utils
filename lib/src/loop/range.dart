@@ -7,8 +7,8 @@ class Range extends Iterable {
     int min = 0,
     bool increment = true,
   }) : iterator = _RangeIterator(
-          max: max,
-          min: min,
+          max: max + (increment ? 0 : 1),
+          min: min + (increment ? -1 : 0),
           increment: increment,
         );
 }
