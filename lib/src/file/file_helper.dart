@@ -64,28 +64,60 @@ class FileHelper {
 
   /// Read all files from [dirPath] and order them by name alphabetically
   static Future<List<File>> listFilesInDirectoryOrdered(Directory directory) async {
-    List<File> files = await listFilesInDirectory(directory);
-    return files..sort((f1, f2) => f1.path.compareTo(f2.path));
+    return (await lsDir(
+      directory,
+      filter: (e) => e is File,
+      order: (f1, f2) => f1.path.compareTo(f2.path),
+    ))
+        .cast();
   }
 
   /// Read all files from [dirPath]
   static Future<List<File>> listFilesInDirectory(Directory directory) async {
+    return (await lsDir(
+      directory,
+      filter: (e) => e is File,
+    ))
+        .cast();
+  }
+
+  /// Read all directories from [dirPath]
+  static Future<List<Directory>> listDirsInDirectory(Directory directory) async {
+    return (await lsDir(
+      directory,
+      filter: (e) => e is Directory,
+    ))
+        .cast();
+  }
+
+  /// Read all file entities from [directory].
+  /// Apply [filter] and [order] if provided.
+  static Future<List<FileSystemEntity>> lsDir(
+    Directory directory, {
+    bool Function(FileSystemEntity e)? filter,
+    int Function(FileSystemEntity a, FileSystemEntity b)? order,
+  }) async {
     await _validateDirExists(directory.path);
 
-    Completer<List<File>> fileCompleter = Completer();
-    List<File> files = [];
+    Completer<List<FileSystemEntity>> fileCompleter = Completer();
+    List<FileSystemEntity> files = [];
 
     final stream = directory.list(followLinks: false, recursive: false);
     stream.listen(
       (FileSystemEntity e) {
-        if (e is File) {
+        if (filter?.call(e) ?? true) {
           files.add(e);
         }
       },
       onDone: () => fileCompleter.complete(files),
     );
 
-    return fileCompleter.future;
+    final completed = await fileCompleter.future;
+
+    if (order != null) {
+      return completed..sort(order);
+    }
+    return completed;
   }
 
   // ========================================================================= CREATE
