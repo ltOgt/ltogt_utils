@@ -1,10 +1,10 @@
 name: ltogt_utils
 description: A collection of utility classes, functions, extensions, helpers, ...
-version: 0.0.3
+version: 0.0.4
 homepage: https://github.com/ltOgt
 
 environment:
-  sdk: ">=2.13.0 <3.0.0"
+  sdk: ">=2.18.0-0 <3.0.0"
 
 dependencies:
   path: 1.8.1

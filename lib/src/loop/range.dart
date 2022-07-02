@@ -1,16 +1,19 @@
 class Range extends Iterable {
   @override
-  final Iterator iterator;
+  _RangeIterator get iterator => _gen();
 
+  final _RangeIterator Function() _gen;
+
+  /// [max] and [min] are inclusive
   Range(
     int max, {
     int min = 0,
     bool increment = true,
-  }) : iterator = _RangeIterator(
-          max: max + (increment ? 0 : 1),
-          min: min + (increment ? -1 : 0),
-          increment: increment,
-        );
+  }) : _gen = (() => _RangeIterator(
+              max: max + (increment ? 0 : 1),
+              min: min + (increment ? -1 : 0),
+              increment: increment,
+            ));
 }
 
 class _RangeIterator implements Iterator {
