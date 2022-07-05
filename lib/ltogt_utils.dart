@@ -4,6 +4,7 @@ export 'src/future/async_barrier.dart';
 
 export 'src/list/list_generator.dart';
 export 'src/list/list_extension.dart';
+export 'src/list/n_times.dart';
 
 export 'src/loop/loop_helper.dart';
 export 'src/loop/range.dart';
