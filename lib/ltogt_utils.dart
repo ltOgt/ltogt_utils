@@ -1,6 +1,7 @@
 library ltogt_utils;
 
 export 'src/future/async_barrier.dart';
+export 'src/future/delayed_unique.dart';
 
 export 'src/list/list_generator.dart';
 export 'src/list/list_extension.dart';
@@ -19,7 +20,6 @@ export 'src/date/date_helper.dart';
 
 export 'src/map/n_way_lookup.dart';
 export 'src/map/invert_map.dart';
-export 'src/map/use_value.dart';
 export 'src/map/read_only_map.dart';
 export 'src/map/put_if_absent_async.dart';
 
@@ -44,3 +44,4 @@ export 'src/gen/poor_mans_gen.dart';
 export 'src/id/circle_id.dart';
 
 export 'src/orNull.dart';
+export 'src/use_value.dart';
