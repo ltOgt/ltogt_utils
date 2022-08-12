@@ -38,10 +38,10 @@ export 'src/type/union.dart';
 export 'src/type/tuple.dart';
 
 export 'src/null/null_helpers.dart';
+export 'src/null/orNull.dart';
 
 export 'src/gen/poor_mans_gen.dart';
 
 export 'src/id/circle_id.dart';
 
-export 'src/orNull.dart';
 export 'src/use_value.dart';
