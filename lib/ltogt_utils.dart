@@ -39,6 +39,7 @@ export 'src/type/tuple.dart';
 
 export 'src/null/null_helpers.dart';
 export 'src/null/orNull.dart';
+export 'src/null/ifNotNull.dart';
 
 export 'src/gen/poor_mans_gen.dart';
 
