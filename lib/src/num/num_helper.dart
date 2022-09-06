@@ -30,10 +30,10 @@ class NumHelper {
   // basically min-max scaling
   static double rescale({
     required double value,
-    required double max,
     required double min,
-    required double newMax,
+    required double max,
     required double newMin,
+    required double newMax,
   }) {
     return ((value - min) / (max - min)) * (newMax - newMin) + newMin;
   }

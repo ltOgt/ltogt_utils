@@ -75,5 +75,16 @@ void main() {
       expect(mid, equals(-1));
       expect(max, equals(-.5));
     });
+
+    test('(-10,10) => (0,20)', () async {
+      double r(double v) => NumHelper.rescale(value: v, min: -10, max: 10, newMin: 0, newMax: 20);
+      final min = r(-10);
+      final mid = r(0);
+      final max = r(10);
+
+      expect(min, equals(0));
+      expect(mid, equals(10));
+      expect(max, equals(20));
+    });
   });
 }
