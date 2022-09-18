@@ -22,6 +22,7 @@ class FileTreePath {
     return "[${segments.join(',')}]";
   }
 
+  /// Joins the tree path segments with `/`
   String asFilePath() => segments.join('/');
 
   @override
