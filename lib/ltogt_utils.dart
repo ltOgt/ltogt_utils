@@ -15,6 +15,7 @@ export 'src/num/num_helper.dart';
 
 export 'src/string/string_helper.dart';
 export 'src/string/string_offset.dart';
+export 'src/string/string_converter.dart';
 
 export 'src/date/date_helper.dart';
 
