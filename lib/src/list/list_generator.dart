@@ -11,11 +11,14 @@ class ListGenerator {
   static List<R> forEach<T, R>({
     required List<T> list,
     required R Function(T item, int index) builder,
+    List<R>? ifEmpty,
   }) =>
-      List.generate(
-        list.length,
-        (index) => builder(list[index], index),
-      );
+      (list.isEmpty && ifEmpty != null)
+          ? ifEmpty!
+          : List.generate(
+              list.length,
+              (index) => builder(list[index], index),
+            );
 
   /// Like [List.generate(length, generator)] but with start and end index instead.
   ///
