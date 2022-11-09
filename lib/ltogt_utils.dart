@@ -47,3 +47,5 @@ export 'src/gen/poor_mans_gen.dart';
 export 'src/id/circle_id.dart';
 
 export 'src/use_value.dart';
+
+export 'src/set_helper.dart';
