@@ -14,7 +14,7 @@ class ListGenerator {
     List<R>? ifEmpty,
   }) =>
       (list.isEmpty && ifEmpty != null)
-          ? ifEmpty!
+          ? ifEmpty
           : List.generate(
               list.length,
               (index) => builder(list[index], index),
