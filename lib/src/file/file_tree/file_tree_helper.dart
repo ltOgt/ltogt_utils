@@ -28,14 +28,28 @@ class FileTreeHelper {
     int maxDepth = 30,
     bool followSymlinks = false,
     bool statDate = false,
+    bool Function(FileSystemEntity file)? include,
   }) async {
     assert(followSymlinks == false, "followSymlinks=true; Not yet implemented");
 
-    return FileTree(rootDir: await _walkDirRecursion(rootDir, maxDepth, blacklist, statDate));
+    return FileTree(
+      rootDir: await _walkDirRecursion(
+        rootDir,
+        maxDepth,
+        blacklist,
+        statDate,
+        include,
+      ),
+    );
   }
 
   static Future<FileTreeDir> _walkDirRecursion(
-      Directory directory, int recursions, RegExp? blacklist, bool statDate) async {
+    Directory directory,
+    int recursions,
+    RegExp? blacklist,
+    bool statDate,
+    bool Function(FileSystemEntity file)? include,
+  ) async {
     String name = FileHelper.fileName(directory);
     List<FileTreeFile> files = [];
     List<FileTreeDir> dirs = [];
@@ -49,8 +63,13 @@ class FileTreeHelper {
         continue;
       }
 
+      // skip non include
+      if (include != null && !include.call(entity)) {
+        continue;
+      }
+
       if (entity is Directory) {
-        dirs.add(await _walkDirRecursion(entity, recursions - 1, blacklist, statDate));
+        dirs.add(await _walkDirRecursion(entity, recursions - 1, blacklist, statDate, include));
       } else if (entity is File) {
         files.add(FileTreeFile(
           name: FileHelper.fileName(entity),
