@@ -51,3 +51,5 @@ export 'src/use_value.dart';
 export 'src/set_helper.dart';
 
 export 'src/try_or.dart';
+
+export 'src/collection_utils.dart';
