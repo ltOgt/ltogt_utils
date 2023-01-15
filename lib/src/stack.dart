@@ -6,9 +6,12 @@ class StackList<E> {
   final _entries = <E>[];
 
   void put(E e) => _entries.add(e);
-  E pop(E e) => _entries.removeLast();
+  E pop() => _entries.removeLast();
 
   int get depth => _entries.length - 1;
   bool get isEmpty => _entries.isEmpty;
   bool get isNotEmpty => _entries.isNotEmpty;
+
+  @override
+  String toString() => "StackList<$E>($_entries)";
 }
