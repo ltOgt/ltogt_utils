@@ -35,4 +35,10 @@ class StringHelper {
       isMatchToEnd ? "" : s.substring(match.endExcl, s.length),
     ];
   }
+
+  /// Ignores all but the first char of the string.
+  /// Breaks on empty string.
+  static nextChar(String s, [int i = 1]) => charFromInt(charAsInt(s) + i);
+  static charFromInt(int i, [String? base]) => String.fromCharCode(i + (orNull(() => charAsInt(base!)) ?? 0));
+  static charAsInt(String s) => s.codeUnits.first;
 }
