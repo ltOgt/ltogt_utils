@@ -1,3 +1,4 @@
+import 'package:ltogt_utils/ltogt_utils.dart';
 import 'package:ltogt_utils/src/num/num_helper.dart';
 
 class DateHelper {
@@ -7,6 +8,11 @@ class DateHelper {
     final mm = NumHelper.paddedString(date.month, 12);
     final dd = NumHelper.paddedString(date.day, 31);
     return "$yyyy-$mm-$dd";
+  }
+
+  static String yyyymmdd(DateTime date, [String? seperator]) {
+    final s = dateString(date);
+    return seperator == null ? s : s.replaceAll("-", seperator);
   }
 
   /// prints yyyy-mm-dd hh:mm.ss
