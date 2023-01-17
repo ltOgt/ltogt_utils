@@ -45,6 +45,7 @@ export 'src/null/ifNotNull.dart';
 export 'src/gen/poor_mans_gen.dart';
 
 export 'src/id/circle_id.dart';
+export 'src/id/letter_id.dart';
 
 export 'src/use_value.dart';
 
