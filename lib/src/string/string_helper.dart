@@ -48,14 +48,23 @@ class StringHelper {
   /// - second from [index] to the end
   static List<String> splitAt(String s, int index) => [s.substring(0, index), s.substring(index)];
 
-  /// Gets the character at [i] and searches left and right for the next whitespace.
-  /// Returns the word in between those whitespaces.
+  /// Gets the character at [i] and searches left and right for the next [delimiter].
+  /// Returns the word in between those [delimiter]s.
   ///
   /// § ("Hello my Friend", 6) => "my"
   /// § ("Hello my Friend", 0) => "Hello"
   /// § ("Hello my Friend", 5) => null
-  static String? wordAtIndex(String s, int i, [String delimiter = " "]) {
+  static String? wordAtIndex(String s, int i, [String delimiter = " "]) => wordAtIndexBounds(s, i)?.forSubstring(s);
+
+  /// Gets the character at [i] and searches left and right for the next [delimiter].
+  /// Returns the bounds of the word in between those [delimiter]s.
+  ///
+  /// § ("Hello my Friend", 6) => (6,8)
+  /// § ("Hello my Friend", 0) => (0,5)
+  /// § ("Hello my Friend", 5) => null
+  static StringOffset? wordAtIndexBounds(String s, int i, [String delimiter = " "]) {
     assert(delimiter.length == 1, "Only works for single char delimiters");
+    if (i >= s.length || i < 0) return null;
     if (charAt(s, i) == delimiter) return null;
 
     int? start, end;
@@ -83,6 +92,6 @@ class StringHelper {
       }
     }
 
-    return s.substring(start ?? 0, end ?? s.length);
+    return StringOffset(start ?? 0, end ?? s.length);
   }
 }
