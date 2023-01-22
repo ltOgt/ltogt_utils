@@ -38,7 +38,51 @@ class StringHelper {
 
   /// Ignores all but the first char of the string.
   /// Breaks on empty string.
-  static nextChar(String s, [int i = 1]) => charFromInt(charAsInt(s) + i);
-  static charFromInt(int i, [String? base]) => String.fromCharCode(i + (orNull(() => charAsInt(base!)) ?? 0));
-  static charAsInt(String s) => s.codeUnits.first;
+  static String nextChar(String s, [int i = 1]) => charFromInt(charAsInt(s) + i);
+  static String charFromInt(int i, [String? base]) => String.fromCharCode(i + (orNull(() => charAsInt(base!)) ?? 0));
+  static int charAsInt(String s) => s.codeUnits.first;
+  static String charAt(String s, int index) => String.fromCharCode(s.codeUnits[index]);
+
+  /// Returns a list of two strings
+  /// - first from 0 to [index] (excl)
+  /// - second from [index] to the end
+  static List<String> splitAt(String s, int index) => [s.substring(0, index), s.substring(index)];
+
+  /// Gets the character at [i] and searches left and right for the next whitespace.
+  /// Returns the word in between those whitespaces.
+  ///
+  /// § ("Hello my Friend", 6) => "my"
+  /// § ("Hello my Friend", 0) => "Hello"
+  /// § ("Hello my Friend", 5) => null
+  static String? wordAtIndex(String s, int i, [String delimiter = " "]) {
+    assert(delimiter.length == 1, "Only works for single char delimiters");
+    if (charAt(s, i) == delimiter) return null;
+
+    int? start, end;
+
+    final split = splitAt(s, i);
+    final first = split.first;
+    final last = split.last;
+
+    if (first.isNotEmpty) {
+      for (int back = first.length - 1; back >= 0; back--) {
+        final char = String.fromCharCode(first.codeUnits[back]);
+        if (char == delimiter) {
+          start = back + 1;
+          break;
+        }
+      }
+    }
+    if (last.isNotEmpty) {
+      for (int forward = 0; forward < last.codeUnits.length; forward++) {
+        final char = String.fromCharCode(last.codeUnits[forward]);
+        if (char == delimiter) {
+          end = i + forward;
+          break;
+        }
+      }
+    }
+
+    return s.substring(start ?? 0, end ?? s.length);
+  }
 }

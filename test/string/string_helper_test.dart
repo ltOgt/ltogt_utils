@@ -36,5 +36,23 @@ void main() {
         expect(StringHelper.charAsInt("["), 91);
       });
     });
+
+    test("Word at index", () {
+      expect(StringHelper.wordAtIndex("Hello my friend", 0), "Hello");
+      expect(StringHelper.wordAtIndex("Hello my friend", 1), "Hello");
+      expect(StringHelper.wordAtIndex("Hello my friend", 2), "Hello");
+      expect(StringHelper.wordAtIndex("Hello my friend", 3), "Hello");
+      expect(StringHelper.wordAtIndex("Hello my friend", 4), "Hello");
+      expect(StringHelper.wordAtIndex("Hello my friend", 5), null);
+      expect(StringHelper.wordAtIndex("Hello my friend", 6), "my");
+      expect(StringHelper.wordAtIndex("Hello my friend", 7), "my");
+      expect(StringHelper.wordAtIndex("Hello my friend", 8), null);
+      expect(StringHelper.wordAtIndex("Hello my friend", 9), "friend");
+      expect(StringHelper.wordAtIndex("Hello my friend", 10), "friend");
+      expect(StringHelper.wordAtIndex("Hello my friend", 11), "friend");
+      expect(StringHelper.wordAtIndex("Hello my friend", 12), "friend");
+      expect(StringHelper.wordAtIndex("Hello my friend", 13), "friend");
+      expect(StringHelper.wordAtIndex("Hello my friend", 14), "friend");
+    });
   });
 }
