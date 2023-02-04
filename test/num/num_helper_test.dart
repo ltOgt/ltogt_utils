@@ -54,6 +54,27 @@ void main() {
   });
 
   group('rescale', () {
+    test('assertions for min max ordering', () {
+      expect(
+          () => NumHelper.rescale(
+                value: 0,
+                min: 1,
+                max: 0,
+                newMin: 0,
+                newMax: 1,
+              ),
+          throwsA(isA<AssertionError>()));
+      expect(
+          () => NumHelper.rescale(
+                value: 0,
+                min: 0,
+                max: 1,
+                newMin: 1,
+                newMax: 0,
+              ),
+          throwsA(isA<AssertionError>()));
+    });
+
     test('(0,100) => (-1,1)', () async {
       double r(double v) => NumHelper.rescale(value: v, min: 0, max: 100, newMin: -1, newMax: 1);
       final min = r(0);
@@ -86,5 +107,21 @@ void main() {
       expect(mid, equals(10));
       expect(max, equals(20));
     });
+  });
+
+  test('isBetween', () {
+    expect(NumHelper.isBetween(100, 0, 100), isTrue);
+    expect(NumHelper.isBetween(100, 0, 99), isFalse);
+    expect(NumHelper.isBetween(-100, -100, 0), isTrue);
+    expect(NumHelper.isBetween(-100, -99, 0), isFalse);
+    expect(() => NumHelper.isBetween(0, 1, -1), throwsA(isA<AssertionError>()));
+  });
+
+  test('bounded', () {
+    expect(NumHelper.bounded(-1, 0, 1), 0);
+    expect(NumHelper.bounded(2, 0, 1), 1);
+    expect(NumHelper.bounded(2, -10, -1), -1);
+    expect(NumHelper.bounded(2, 100, 101), 100);
+    expect(() => NumHelper.bounded(0, 1, -1), throwsA(isA<AssertionError>()));
   });
 }

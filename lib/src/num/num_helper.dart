@@ -1,5 +1,3 @@
-import 'package:ltogt_utils/ltogt_utils.dart';
-
 class NumHelper {
   NumHelper._();
 
@@ -34,11 +32,29 @@ class NumHelper {
     required double max,
     required double newMin,
     required double newMax,
+    bool enforceNewBounds = false,
+    bool enforceOldBounds = false,
   }) {
-    return ((value - min) / (max - min)) * (newMax - newMin) + newMin;
+    assert(min <= max);
+    assert(newMin <= newMax);
+
+    final _value = enforceOldBounds ? bounded(value, min, max) : value;
+
+    final _scaled = ((_value - min) / (max - min)) * (newMax - newMin) + newMin;
+
+    return enforceNewBounds ? bounded(_scaled, newMin, newMax) : _scaled;
   }
 
   static bool isBetween(double val, double? min, double? max) {
+    assert((min ?? double.negativeInfinity) <= (max ?? double.infinity));
     return (val >= (min ?? double.negativeInfinity) && val <= (max ?? double.infinity));
   }
+
+  static T bounded<T extends num>(T value, T min, T max) {
+    assert(min <= max);
+    return smaller(max, larger(min, value));
+  }
+
+  static T smaller<T extends num>(T a, T b) => a < b ? a : b;
+  static T larger<T extends num>(T a, T b) => a > b ? a : b;
 }
