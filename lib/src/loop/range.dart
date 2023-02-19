@@ -50,8 +50,7 @@ class _RangeIterator implements Iterator {
   })  : current = increment ? min : max,
         _limit = increment ? max : min,
         _isIncrement = increment,
-        assert(max > min);
+        assert(max >= min);
 
   // TODO consider adding length constructor
-
 }

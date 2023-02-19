@@ -26,5 +26,24 @@ void main() {
       ];
       expect(actual, equals(expected));
     });
+
+    test("0 to 0", () {
+      List<int> expected = [0];
+      List<int> actual = [
+        for (int i in Range(0)) //
+          i,
+      ];
+      expect(actual, equals(expected));
+    });
+
+    test("none", () {
+      final length = 0;
+      List<int> expected = [];
+      List<int> actual = [
+        for (int i in Range(length - 1)) //
+          i,
+      ];
+      expect(actual, equals(expected));
+    });
   });
 }
