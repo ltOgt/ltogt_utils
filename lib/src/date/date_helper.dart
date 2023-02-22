@@ -26,4 +26,50 @@ class DateHelper {
   static String nowString() {
     return dateTimeString(DateTime.now());
   }
+
+  /// Encodes [date] as UTC yyyy-mm-dd
+  static String encodeAsDateString(DateTime date) => dateString(date.toUtc());
+
+  /// Back conversion from [DateHelper.encodeAsDateString]
+  static DateTime decodeFromDateString(String dateString) {
+    final components = dateString.split("-");
+    if (components.length != 3) throw Exception("Invalid dateString: $dateString");
+
+    final yearString = components[0];
+    final monthString = components[1];
+    final dayString = components[2];
+
+    return DateTime(int.parse(yearString), int.parse(monthString), int.parse(dayString));
+  }
+
+  /// Encodes [dateTime] as UTC yyyy-mm-dd hh:mm.ss
+  static String encodeAsDateTimeString(DateTime dateTime) => dateTimeString(dateTime.toUtc());
+
+  /// Back conversion from [DateHelper.encodeAsDateTimeString]
+  static DateTime decodeFromDateTimeString(String dateTimeString) {
+    final components = dateTimeString.split("-");
+
+    final yearString = components[0];
+    final monthString = components[1];
+
+    final dayAndTime = components[2].split(" ");
+
+    final dayString = dayAndTime[0];
+    final hourAndRest = dayAndTime[1].split(":");
+
+    final hour = hourAndRest[0];
+    final minuteAndSecond = hourAndRest[1].split(".");
+
+    final minute = minuteAndSecond[0];
+    final second = minuteAndSecond[1];
+
+    return DateTime.utc(
+      int.parse(yearString),
+      int.parse(monthString),
+      int.parse(dayString),
+      int.parse(hour),
+      int.parse(minute),
+      int.parse(second),
+    );
+  }
 }
