@@ -56,3 +56,5 @@ export 'src/try_or.dart';
 export 'src/collection_utils.dart';
 
 export 'src/stack.dart';
+
+export 'src/index_path.dart';
