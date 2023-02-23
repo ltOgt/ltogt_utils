@@ -5,6 +5,9 @@
 /// x[0][1][4][1] ^= [0,1,4,1]
 typedef IndexPath = List<int>;
 
+/// An index withing [IndexPath]
+typedef IndexPathIndex = int;
+
 abstract class IndexPathHelper {
   /// Get the element [T] at [indexPath] via iterative application of [getNext] with the indexes in [indexPath]
   static T extract<T>({required T Function(T? current, int i) getNext, required IndexPath indexPath}) {
