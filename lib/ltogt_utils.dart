@@ -58,3 +58,5 @@ export 'src/collection_utils.dart';
 export 'src/stack.dart';
 
 export 'src/index_path.dart';
+
+export 'src/random_utils.dart';
