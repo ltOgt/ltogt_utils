@@ -3,7 +3,7 @@ import 'dart:math';
 class RandomUtils {
   final Random random = Random();
 
-  Map<K, dynamic> randomMap<K>({
+  Map<K, dynamic> randomTreeMap<K>({
     required int maxDepth,
     required int maxBreadth,
     int minBreadth = 1,
@@ -11,7 +11,7 @@ class RandomUtils {
     required K Function(K parent, int posInParent, int parentChildCount, int depth) getKey,
   }) {
     assert(minBreadth <= maxBreadth);
-    return _randomMap(
+    return _randomTreeMap(
       depth: 0,
       maxDepth: maxDepth,
       maxBreadth: maxBreadth,
@@ -23,7 +23,7 @@ class RandomUtils {
     );
   }
 
-  Map<K, dynamic> _randomMap<K>({
+  Map<K, dynamic> _randomTreeMap<K>({
     required int depth,
     required int maxDepth,
     required int maxBreadth,
@@ -37,7 +37,7 @@ class RandomUtils {
         for (int i = 0, len = random.nextInt(maxBreadth - minBreadth) + minBreadth; i < len; i++) //
           getKey(parentKey, i, len, depth): maxDepth == depth
               ? {}
-              : _randomMap(
+              : _randomTreeMap(
                   depth: depth + 1,
                   maxDepth: maxDepth,
                   maxBreadth: maxBreadth,
