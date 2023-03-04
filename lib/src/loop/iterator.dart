@@ -111,3 +111,72 @@ class _ReversedIterator<E> extends Iterator<E> {
 
   _ReversedIterator(this._iterable);
 }
+
+/// Iterable over [list] which will return [DoubleIndexedItem]s
+/// containing the original [DoubleIndexedItem.value] of [list]
+/// along with the [DoubleIndexedItem.index] and [DoubleIndexedItem.reverseIndex].
+///
+/// ```dart
+/// for (final indexed in DoubleIndexed(["a", "b", "c"])) {
+///   print("${indexed.index}-${indexed.reverseIndex} : ${indexed.item}");
+///   // => "0-2 : a" // isFirst == true
+///   // => "1-1 : b" // isMiddle == true
+///   // => "2-0 : c" // isLast == true
+/// }
+/// ```
+class DoubleIndexed<E> extends Iterable<DoubleIndexedItem<E>> {
+  @override
+  _DoubleIndexedAccessIterator<E> get iterator => new _DoubleIndexedAccessIterator(list);
+
+  final List<E> list;
+
+  DoubleIndexed(this.list);
+}
+
+class _DoubleIndexedAccessIterator<E> extends Iterator<DoubleIndexedItem<E>> {
+  final List<E> list;
+
+  int index = -1;
+  late int indexReverse = list.length;
+
+  /// `moveNext` must be called before this can be accessed
+  @override
+  DoubleIndexedItem<E> get current => DoubleIndexedItem(index, indexReverse, list[index]);
+
+  @override
+  bool moveNext() {
+    index += 1;
+    indexReverse -= 1;
+    return indexReverse > -1;
+  }
+
+  _DoubleIndexedAccessIterator(this.list);
+}
+
+class DoubleIndexedItem<E> {
+  final int index;
+  final int reverseIndex;
+  final E value;
+
+  bool get isFirst => index == 0;
+  bool get isLast => reverseIndex == 0;
+
+  /// is this item exactly in the middle of its siblings
+  /// only possible in odd numbered lists
+  bool get isMiddleExact => index == reverseIndex;
+
+  /// is this item the last of the first half of the children
+  /// i.e. one of the two middle items in even numbered lists
+  /// only possible in even numbered lists
+  bool get isMiddlePre => index + 1 == reverseIndex;
+
+  /// is this item the first of the second half of the children
+  /// i.e. one of the two middle items in even numbered lists
+  /// only possible in even numbered lists
+  bool get isMiddlePost => index - 1 == reverseIndex;
+
+  /// Either [isMiddleExact] (diff 0) or [isMiddlePre]/[isMiddlePost] (diff 1)
+  bool get isMiddle => (index - reverseIndex).abs() < 2;
+
+  DoubleIndexedItem(this.index, this.reverseIndex, this.value);
+}

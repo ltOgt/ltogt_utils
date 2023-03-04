@@ -20,6 +20,50 @@ void main() {
     });
   });
 
+  group('DoubleIndexedIterator', () {
+    test('DoubleIndexedIterator itterates for even List', () {
+      final list = [0, 1, 2, 3, 4, 5];
+      for (final di in DoubleIndexed(list)) {
+        expect(di.index, di.value); // by design of the list values
+
+        expect(di.value == list.first, di.isFirst);
+        expect(di.value == list.last, di.isLast);
+
+        expect(di.isMiddleExact, false);
+
+        expect(di.value == 2 || di.value == 3, di.isMiddle);
+
+        expect(di.value == 2, di.isMiddlePre);
+        expect(di.value == 3, di.isMiddlePost);
+      }
+    });
+
+    test('DoubleIndexedIterator itterates for odd List', () {
+      final list = [0, 1, 2, 3, 4, 5, 6];
+      for (final di in DoubleIndexed(list)) {
+        expect(di.index, di.value); // by design of the list values
+
+        expect(di.value == list.first, di.isFirst);
+        expect(di.value == list.last, di.isLast);
+
+        expect(di.isMiddlePre, false);
+        expect(di.isMiddlePost, false);
+
+        expect(di.value == 3, di.isMiddle);
+        expect(di.value == 3, di.isMiddleExact);
+      }
+    });
+
+    test('isEmpty does not change', () {
+      final list = [0, 1, 2];
+      final indexed = DoubleIndexed(list);
+      expect(indexed.isEmpty, isFalse);
+      expect(indexed.isEmpty, isFalse);
+      expect(indexed.isEmpty, isFalse);
+      expect(indexed.isEmpty, isFalse);
+    });
+  });
+
   group('Reversed', () {
     test('Reversed only', () {
       final list = ["x", "a", "b", "c", "x"];
