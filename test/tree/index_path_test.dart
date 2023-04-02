@@ -1,4 +1,4 @@
-import 'package:ltogt_utils/src/index_path.dart';
+import 'package:ltogt_utils/src/tree/index_path.dart';
 import 'package:test/test.dart';
 
 void main() {
