@@ -3,6 +3,8 @@ import 'dart:math';
 class RandomUtils {
   final Random random = Random();
 
+  T randomFrom<T>(List<T> l) => l[random.nextInt(l.length - 1)];
+
   Map<K, dynamic> randomTreeMap<K>({
     required int maxDepth,
     required int maxBreadth,
