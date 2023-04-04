@@ -56,4 +56,12 @@ extension ListExtension<E> on Iterable<E> {
       return null;
     }
   }
+
+  R collect<R>(R init, R Function(R acc, E ele) collector) {
+    R acc = init;
+    for (final e in this) {
+      acc = collector(acc, e);
+    }
+    return acc;
+  }
 }
