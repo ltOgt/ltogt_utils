@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:ltogt_utils/ltogt_utils.dart';
 import 'package:ltogt_utils/src/tree/tree_walker.dart';
 import 'package:test/test.dart';
 
@@ -77,6 +78,35 @@ void main() {
       );
       print("nodeCount: $count");
       print("took: ${DateTime.now().difference(t0)}");
+    });
+  });
+
+  group('walkParentDFS', () {
+    test('test simple map', () {
+      final trace = walkDFS(
+        rootNodeSource: "R",
+        getChildrenSource: (n) => n.length < 5 //
+            ? ["$n.0", "$n.1", "$n.2"]
+            : [],
+      );
+
+      final lastLeaf = trace.last;
+      expect(lastLeaf.sourceNode, "R.2.2");
+      expect(lastLeaf.parent!.sourceNode, "R.2");
+
+      final traceParent = walkParentDFS(
+        startNodeSource: lastLeaf,
+        getWalkParentData: (nodeSource) => WalkParentData(
+          parent: nodeSource.parent,
+          indexInParent: nodeSource.indexInParent,
+          parentChildren: nodeSource.parent?.children.toList() ?? [nodeSource],
+        ),
+        getChildrenSource: (node) => node.children.toList(),
+      );
+
+      expect(traceParent.first.sourceNode.sourceNode, lastLeaf.sourceNode);
+      expect(traceParent.last.sourceNode.sourceNode, "R");
+      expect(traceParent.length, trace.length);
     });
   });
 }

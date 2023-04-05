@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:collection';
 
+import 'package:ltogt_utils/ltogt_utils.dart';
 import 'package:ltogt_utils/src/list/list_extension.dart';
 import 'package:ltogt_utils/src/stack.dart';
 
@@ -75,6 +76,11 @@ class TreeNodeDFS<S> {
 
   bool get isLeaf => children.isEmpty;
   bool get isOnlyChild => parentChildCount == 1;
+
+  @override
+  String toString() {
+    return 'TreeNodeDFS(sourceNode: $sourceNode, parent: $parent, _children: $_children, depth: $depth, indexInParent: $indexInParent, subtreeSize: $subtreeSize)';
+  }
 }
 
 class _StackLayer<S> {
@@ -189,4 +195,54 @@ List<TreeNodeDFS<S>> walkDFS<S>({
       );
     }
   }
+}
+
+class WalkParentData<S> {
+  S get node => parentChildren[indexInParent];
+  final S? parent;
+  final int indexInParent;
+  final List<S> parentChildren;
+
+  WalkParentData({
+    required this.parent,
+    required this.indexInParent,
+    required this.parentChildren,
+  });
+}
+
+/// Starting from [rootNodeSource],
+/// [getChildrenSource] is applied for each node along the tree.
+/// Via depth first descend.
+///
+/// You can enforce things like `maxDepth` by returning an empty list
+/// from [getChildrenSource].
+///
+/// Returns the trace of the walk (starting from the root).
+/// Where all [TreeNodeDFS]s are complete with references to each other.
+List<TreeNodeDFS<S>> walkParentDFS<S>({
+  required S startNodeSource,
+  required WalkParentData<S> Function(S nodeSource) getWalkParentData,
+  required List<S> Function(S node) getChildrenSource,
+}) {
+  S? markedForParentData = startNodeSource;
+  return walkDFS(
+    rootNodeSource: startNodeSource,
+    getChildrenSource: (node) {
+      if (node != markedForParentData) {
+        return getChildrenSource(node);
+      }
+
+      final parentData = getWalkParentData(node);
+      markedForParentData = parentData.parent;
+      final r = [
+        if (parentData.indexInParent > 0) //
+          ...parentData.parentChildren.sublist(0, parentData.indexInParent),
+        if (parentData.parent != null) //
+          parentData.parent!,
+        if (parentData.indexInParent < parentData.parentChildren.length - 1) //
+          ...parentData.parentChildren.sublist(parentData.indexInParent + 1),
+      ];
+      return r;
+    },
+  );
 }
