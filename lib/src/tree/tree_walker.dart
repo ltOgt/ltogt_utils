@@ -224,24 +224,85 @@ List<TreeNodeDFS<S>> walkParentDFS<S>({
   required WalkParentData<S> Function(S nodeSource) getWalkParentData,
   required List<S> Function(S node) getChildrenSource,
 }) {
-  S? markedForParentData = startNodeSource;
+  if (true) {
+    S? markedForParentData = startNodeSource;
+    return walkDFS(
+      rootNodeSource: startNodeSource,
+      getChildrenSource: (node) {
+        if (node != markedForParentData) {
+          return getChildrenSource(node);
+        }
+
+        final parentData = getWalkParentData(node);
+        markedForParentData = parentData.parent;
+        final r = [
+          if (parentData.indexInParent > 0) //
+            ...parentData.parentChildren.sublist(0, parentData.indexInParent),
+          if (parentData.parent != null) //
+            parentData.parent!,
+          if (parentData.indexInParent < parentData.parentChildren.length - 1) //
+            ...parentData.parentChildren.sublist(parentData.indexInParent + 1),
+        ];
+        return r;
+      },
+    );
+  }
+
+  // TODO idea seems nice, but does not work 100% yet
+
+  // TODO maybe we want the following instead
+  /**
+   currently:
+      isRoot   => isMarked
+      isMarked => parent(node) => [parent.children.replace(node, parent)]
+                // need to track markedAsNextTarget (markedForParentData)
+                    => markedForParentData = parent
+      else     => children(node)
+    instead:
+      isRoot   => [parent(node)]
+      isMarked => parent(node) => [children(node).replace(previous, parent)]
+                // need to track markedAsPreviousOrigin instead of markedAsNextTarget
+                    => markedAsPreviousOrigin = node
+      else     => children(node)
+    */
+
+  // filled on [isRoot] which is first
+  late int indexOfPreviousOrigin;
+  S? markedUpwardParent;
+  bool isFirst = true;
   return walkDFS(
     rootNodeSource: startNodeSource,
     getChildrenSource: (node) {
-      if (node != markedForParentData) {
+      if (node == startNodeSource) {
+        assert(isFirst);
+        isFirst = false;
+        final parentData = getWalkParentData(node);
+        final parent = parentData.parent;
+        indexOfPreviousOrigin = parentData.indexInParent;
+        markedUpwardParent = parent;
+        return parent == null ? const [] : [parent];
+      }
+      isFirst = false;
+
+      if (node != markedUpwardParent) {
         return getChildrenSource(node);
       }
 
       final parentData = getWalkParentData(node);
-      markedForParentData = parentData.parent;
+      final parent = parentData.parent;
+      final children = getChildrenSource(node);
       final r = [
-        if (parentData.indexInParent > 0) //
-          ...parentData.parentChildren.sublist(0, parentData.indexInParent),
-        if (parentData.parent != null) //
-          parentData.parent!,
-        if (parentData.indexInParent < parentData.parentChildren.length - 1) //
-          ...parentData.parentChildren.sublist(parentData.indexInParent + 1),
+        if (indexOfPreviousOrigin > 0) //
+          ...children.sublist(0, indexOfPreviousOrigin),
+        if (parent != null) //
+          parent,
+        if (indexOfPreviousOrigin < children.length - 1) //
+          ...children.sublist(indexOfPreviousOrigin + 1),
       ];
+
+      markedUpwardParent = parent;
+      indexOfPreviousOrigin = parentData.indexInParent;
+
       return r;
     },
   );
