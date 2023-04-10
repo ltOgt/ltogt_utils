@@ -64,4 +64,8 @@ extension ListExtension<E> on Iterable<E> {
     }
     return acc;
   }
+
+  E pyIndex(int i) => i > 0 //
+      ? this.elementAt(i)
+      : this.elementAt(this.length + i);
 }
