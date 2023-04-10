@@ -219,35 +219,50 @@ class WalkParentData<S> {
 ///
 /// Returns the trace of the walk (starting from the root).
 /// Where all [TreeNodeDFS]s are complete with references to each other.
+List<TreeNodeDFS<S>> walkParentDFS_try1<S>({
+  required S startNodeSource,
+  required WalkParentData<S> Function(S nodeSource) getWalkParentData,
+  required List<S> Function(S node) getChildrenSource,
+}) {
+  S? markedForParentData = startNodeSource;
+  return walkDFS(
+    rootNodeSource: startNodeSource,
+    getChildrenSource: (node) {
+      if (node != markedForParentData) {
+        return getChildrenSource(node);
+      }
+
+      final parentData = getWalkParentData(node);
+      markedForParentData = parentData.parent;
+      final r = [
+        if (parentData.indexInParent > 0) //
+          ...parentData.parentChildren.sublist(0, parentData.indexInParent),
+        if (parentData.parent != null) //
+          parentData.parent!,
+        if (parentData.indexInParent < parentData.parentChildren.length - 1) //
+          ...parentData.parentChildren.sublist(parentData.indexInParent + 1),
+      ];
+      return r;
+    },
+  );
+}
+
+/// Uses [walkDFS] to build an inverted tree starting from [startNodeSource].
+/// The path from [startNodeSource] to the root of the tree is the `up` path.
+/// It will return its parent, and all its children except the previous `up` parent (one of its children).
+/// All other nodes will include their children only.
+/// (Since those are descandants of the `up` path already)
+///
+/// You can enforce things like `maxDepth` by returning an empty list
+/// from [getChildrenSource].
+///
+/// Returns the trace of the walk (starting from the root).
+/// Where all [TreeNodeDFS]s are complete with references to each other.
 List<TreeNodeDFS<S>> walkParentDFS<S>({
   required S startNodeSource,
   required WalkParentData<S> Function(S nodeSource) getWalkParentData,
   required List<S> Function(S node) getChildrenSource,
 }) {
-  if (true) {
-    S? markedForParentData = startNodeSource;
-    return walkDFS(
-      rootNodeSource: startNodeSource,
-      getChildrenSource: (node) {
-        if (node != markedForParentData) {
-          return getChildrenSource(node);
-        }
-
-        final parentData = getWalkParentData(node);
-        markedForParentData = parentData.parent;
-        final r = [
-          if (parentData.indexInParent > 0) //
-            ...parentData.parentChildren.sublist(0, parentData.indexInParent),
-          if (parentData.parent != null) //
-            parentData.parent!,
-          if (parentData.indexInParent < parentData.parentChildren.length - 1) //
-            ...parentData.parentChildren.sublist(parentData.indexInParent + 1),
-        ];
-        return r;
-      },
-    );
-  }
-
   // TODO idea seems nice, but does not work 100% yet
 
   // TODO maybe we want the following instead
@@ -266,25 +281,23 @@ List<TreeNodeDFS<S>> walkParentDFS<S>({
       else     => children(node)
     */
 
-  // filled on [isRoot] which is first
-  late int indexOfPreviousOrigin;
-  S? markedUpwardParent;
-  bool isFirst = true;
+  /// filled on [isRoot] which is first
+  ///
+  /// index of the previous [upParent] in the children of its parent, the next [upParent]
+  late int previousUpParentChildIndex;
+  S? upParent;
   return walkDFS(
     rootNodeSource: startNodeSource,
     getChildrenSource: (node) {
       if (node == startNodeSource) {
-        assert(isFirst);
-        isFirst = false;
         final parentData = getWalkParentData(node);
         final parent = parentData.parent;
-        indexOfPreviousOrigin = parentData.indexInParent;
-        markedUpwardParent = parent;
+        previousUpParentChildIndex = parentData.indexInParent;
+        upParent = parent;
         return parent == null ? const [] : [parent];
       }
-      isFirst = false;
 
-      if (node != markedUpwardParent) {
+      if (node != upParent) {
         return getChildrenSource(node);
       }
 
@@ -292,16 +305,16 @@ List<TreeNodeDFS<S>> walkParentDFS<S>({
       final parent = parentData.parent;
       final children = getChildrenSource(node);
       final r = [
-        if (indexOfPreviousOrigin > 0) //
-          ...children.sublist(0, indexOfPreviousOrigin),
+        if (previousUpParentChildIndex > 0) //
+          ...children.sublist(0, previousUpParentChildIndex),
         if (parent != null) //
           parent,
-        if (indexOfPreviousOrigin < children.length - 1) //
-          ...children.sublist(indexOfPreviousOrigin + 1),
+        if (previousUpParentChildIndex < children.length - 1) //
+          ...children.sublist(previousUpParentChildIndex + 1),
       ];
 
-      markedUpwardParent = parent;
-      indexOfPreviousOrigin = parentData.indexInParent;
+      upParent = parent;
+      previousUpParentChildIndex = parentData.indexInParent;
 
       return r;
     },
