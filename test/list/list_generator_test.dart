@@ -1,6 +1,4 @@
 // Import the test package and Counter class
-import 'dart:math';
-
 import 'package:ltogt_utils/src/list/list_generator.dart';
 import 'package:test/test.dart';
 

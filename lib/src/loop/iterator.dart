@@ -29,7 +29,7 @@ class Indexed<E> extends Iterable<IndexedItem<E>> {
   Indexed(this.iterable);
 }
 
-class _IndexedAccessIterator<E> extends Iterator<IndexedItem<E>> {
+class _IndexedAccessIterator<E> implements Iterator<IndexedItem<E>> {
   final Iterator<E> iterator;
 
   int currentIndex = -1;
@@ -95,7 +95,7 @@ class Reversed<E> extends Iterable<E> {
   Reversed(this.list, {this.skipEnd = 0, this.skipStart = 0});
 }
 
-class _ReversedIterator<E> extends Iterator<E> {
+class _ReversedIterator<E> implements Iterator<E> {
   final Reversed<E> _iterable;
 
   late int _currentIndex = _iterable.list.length - _iterable.skipStart;
@@ -133,7 +133,7 @@ class DoubleIndexed<E> extends Iterable<DoubleIndexedItem<E>> {
   DoubleIndexed(this.list);
 }
 
-class _DoubleIndexedAccessIterator<E> extends Iterator<DoubleIndexedItem<E>> {
+class _DoubleIndexedAccessIterator<E> implements Iterator<DoubleIndexedItem<E>> {
   final List<E> list;
 
   int index = -1;

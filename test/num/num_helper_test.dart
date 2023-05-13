@@ -24,7 +24,7 @@ void main() {
 
     test('THROW 999 -> 10', () async {
       void f() {
-        final s = NumHelper.paddedString(999, 10);
+        final _ = NumHelper.paddedString(999, 10);
       }
 
       expect(() => f(), throwsException);
@@ -46,7 +46,7 @@ void main() {
 
     test('THROW 999 -> 10', () async {
       void f() {
-        final s = NumHelper.paddedString(999, 10);
+        final _ = NumHelper.paddedString(999, 10);
       }
 
       expect(() => f(), throwsException);

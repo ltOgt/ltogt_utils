@@ -8,7 +8,7 @@ void main() {
     expect(gen.current, "A");
     expect(gen.next(), "B");
     expect(gen.current, "B");
-    for (final i in Range(23)) gen.next();
+    for (final _ in Range(23)) gen.next();
     expect(gen.next(), "AA");
   });
 }

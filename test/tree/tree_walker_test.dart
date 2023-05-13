@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:ltogt_utils/ltogt_utils.dart';
 import 'package:ltogt_utils/src/tree/tree_walker.dart';
 import 'package:test/test.dart';

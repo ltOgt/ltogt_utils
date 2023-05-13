@@ -7,7 +7,7 @@ import 'dart:collection';
 /// - short extension
 /// - simper to read
 /// - noticed the other option after writing all this, lol
-class ReadOnlyMap<K, V> implements LinkedHashMap<K, V> {
+final class ReadOnlyMap<K, V> implements Map<K, V> {
   late final Map<K, V> _map;
 
   ReadOnlyMap(Map<K, V> map) : _map = map;
