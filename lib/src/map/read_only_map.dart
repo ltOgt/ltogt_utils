@@ -2,6 +2,8 @@
 
 import 'dart:collection';
 
+@Deprecated("Use UnmodifiableMapView instead")
+
 /// Basically the same as [UnmodifiableMapView], execpt
 /// - shorter name
 /// - short extension
@@ -47,8 +49,4 @@ final class ReadOnlyMap<K, V> implements Map<K, V> {
   void removeWhere(bool Function(K key, V value) test) => throw _unsuported;
   V update(K key, V Function(V value) update, {V Function()? ifAbsent}) => throw _unsuported;
   void updateAll(V Function(K key, V value) update) => throw _unsuported;
-}
-
-extension ReadOnlyMapX<K, V> on Map<K, V> {
-  ReadOnlyMap<K, V> get readOnly => ReadOnlyMap(this);
 }
