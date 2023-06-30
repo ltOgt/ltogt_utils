@@ -20,3 +20,7 @@ abstract class CollectionUtils {
             c.key: c.value,
       };
 }
+
+extension CountX on Iterable {
+  int count() => this.fold(0, (acc, e) => acc + 1);
+}
