@@ -55,7 +55,10 @@ class FileTreeHelper {
     List<FileTreeDir> dirs = [];
 
     // TODO need to check against symbolic links leaving this dir, once [followSymlinks] is passed here
-    List<FileSystemEntity> dirContent = await FileHelper.listDirContent(directory, followLinks: false);
+    List<FileSystemEntity> dirContent = await FileHelper.lsDir(
+      directory,
+      order: (f1, f2) => f1.path.compareTo(f2.path),
+    );
 
     for (FileSystemEntity entity in dirContent) {
       // skip blacklisted
