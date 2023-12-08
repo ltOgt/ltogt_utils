@@ -24,7 +24,8 @@ class FileTreePath {
 
   /// Joins the tree path segments with `/`
   String asFilePath() => segments.join('/');
-  String asFilePathWithSystemRoot(String rootPath) => rootPath + "/" + segmentsWithoutRoot.join('/');
+  String asFilePathWithSystemRoot(String rootPath) =>
+      rootPath + (rootPath.endsWith('/') ? '' : "/") + segmentsWithoutRoot.join('/');
 
   @override
   bool operator ==(Object other) {

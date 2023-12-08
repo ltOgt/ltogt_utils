@@ -33,5 +33,12 @@ void main() {
       expect(m.containsKey(p1Star), isTrue);
       expect(m[p1Star], equals(1));
     });
+
+    test('asFilePathWithSystemRoot can handle trailing slash', () async {
+      final p1 = FileTreePath(["root", "and", "sub", "path.txt"]);
+
+      expect(p1.asFilePathWithSystemRoot("/system/to/root"), "/system/to/root/and/sub/path.txt");
+      expect(p1.asFilePathWithSystemRoot("/system/to/root/"), "/system/to/root/and/sub/path.txt");
+    });
   });
 }
