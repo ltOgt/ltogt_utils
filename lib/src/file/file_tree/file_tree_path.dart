@@ -3,8 +3,15 @@ import 'package:collection/collection.dart';
 
 import 'package:ltogt_utils/src/file/file_tree/file_tree.dart';
 
-/// A path constructed from [FileTree]
+/// A path constructed from [FileTree].
+///
+/// The root folder is included, but the system path to that root folder is hidden.
 class FileTreePath {
+  /// Segments of the tree path, starting with the root folder.
+  ///
+  /// The system path to the root is not included, and explicitly hidden.
+  ///
+  /// See [segmentsWithoutRoot] and [asFilePathWithSystemRoot].
   final List<String> segments;
 
   const FileTreePath(this.segments);
@@ -24,8 +31,11 @@ class FileTreePath {
 
   /// Joins the tree path segments with `/`
   String asFilePath() => segments.join('/');
-  String asFilePathWithSystemRoot(String rootPath) =>
-      rootPath + (rootPath.endsWith('/') ? '' : "/") + segmentsWithoutRoot.join('/');
+
+  /// Joins the [systemRootPath] with [segmentsWithoutRoot]
+  /// which produces the full system path to the file.
+  String asFilePathWithSystemRoot(String systemRootPath) =>
+      systemRootPath + (systemRootPath.endsWith('/') ? '' : "/") + segmentsWithoutRoot.join('/');
 
   @override
   bool operator ==(Object other) {
