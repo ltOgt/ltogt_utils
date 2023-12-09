@@ -26,7 +26,7 @@ class FileTreePath {
 
   @override
   String toString() {
-    return "[${segments.join(',')}]";
+    return "FileTreePath([${segments.map((s) => '"$s"').join(',')}])";
   }
 
   /// Joins the tree path segments with `/`
