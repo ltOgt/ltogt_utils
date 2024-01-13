@@ -9,8 +9,8 @@ sealed class SealedUnion<L, R> {
         final SealedUnionRight right => onRight(right.value),
       };
 
-  const factory SealedUnion.left(L l) = SealedUnionLeft;
-  const factory SealedUnion.right(R r) = SealedUnionRight;
+  const factory SealedUnion.left(L l) = SealedUnionLeft<L, R>;
+  const factory SealedUnion.right(R r) = SealedUnionRight<L, R>;
 
   const SealedUnion();
 }
