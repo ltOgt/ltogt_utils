@@ -3,7 +3,11 @@ import 'package:test/test.dart';
 
 void main() {
   group('SealedUnion<L,R>', () {
-    test('left', () async {
+    test("redirecting constructors", () {
+      expect(const SealedUnion.left(10), const SealedUnionLeft(10));
+      expect(const SealedUnion.right("10"), const SealedUnionRight("10"));
+    });
+    test('resolve', () async {
       SealedUnion<int, String> su;
 
       su = SealedUnion.left(20);

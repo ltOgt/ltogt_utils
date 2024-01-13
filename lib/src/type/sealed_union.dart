@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 sealed class SealedUnion<L, R> {
   T resolve<T>({
     required T Function(L l) onLeft,
@@ -8,8 +9,8 @@ sealed class SealedUnion<L, R> {
         final SealedUnionRight right => onRight(right.value),
       };
 
-  factory SealedUnion.left(L l) => SealedUnionLeft(value: l);
-  factory SealedUnion.right(R r) => SealedUnionRight(value: r);
+  const factory SealedUnion.left(L l) = SealedUnionLeft;
+  const factory SealedUnion.right(R r) = SealedUnionRight;
 
   const SealedUnion();
 }
@@ -17,11 +18,31 @@ sealed class SealedUnion<L, R> {
 class SealedUnionLeft<L, R> extends SealedUnion<L, R> {
   final L value;
 
-  const SealedUnionLeft({required this.value});
+  const SealedUnionLeft(this.value);
+
+  @override
+  bool operator ==(covariant SealedUnionLeft<L, R> other) {
+    if (identical(this, other)) return true;
+
+    return other.value == value;
+  }
+
+  @override
+  int get hashCode => value.hashCode;
 }
 
 class SealedUnionRight<L, R> extends SealedUnion<L, R> {
   final R value;
 
-  const SealedUnionRight({required this.value});
+  const SealedUnionRight(this.value);
+
+  @override
+  bool operator ==(covariant SealedUnionRight<L, R> other) {
+    if (identical(this, other)) return true;
+
+    return other.value == value;
+  }
+
+  @override
+  int get hashCode => value.hashCode;
 }
