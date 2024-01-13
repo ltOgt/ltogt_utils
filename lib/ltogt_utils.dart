@@ -37,6 +37,7 @@ export 'src/assert/xor_params.dart';
 
 export 'src/type/union.dart';
 export 'src/type/tuple.dart';
+export 'src/type/sealed_union.dart';
 
 export 'src/null/null_helpers.dart';
 export 'src/null/orNull.dart';

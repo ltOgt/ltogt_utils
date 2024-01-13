@@ -1,3 +1,4 @@
+@Deprecated("Use records language feature instead")
 class Tuple<A, B> {
   final A a;
   final B b;
@@ -11,6 +12,7 @@ class Tuple<A, B> {
   String toString() => "Tuple(" + ('a: $a, b: $b') + ")";
 }
 
+@Deprecated("Use records language feature instead")
 class Triple<A, B, C> {
   final A a;
   final B b;

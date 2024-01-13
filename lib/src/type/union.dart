@@ -1,5 +1,6 @@
-import 'package:ltogt_utils/src/assert/xor_params.dart';
+import 'package:ltogt_utils/src/null/null_helpers.dart';
 
+@Deprecated("Use SealedUnion<L,R> instead")
 class Union2<A, B> {
   A? a;
   B? b;
@@ -7,12 +8,13 @@ class Union2<A, B> {
   Union2({
     this.a,
     this.b,
-  }) : assert(xorParams([a, b]));
+  }) : assert(oneNotNull([a, b]));
 
   @override
   String toString() => "Union(" + (a != null ? 'a: $a' : 'b: $b') + ")";
 }
 
+@Deprecated("Use SealedUnion<L,R> instead")
 class Union3<A, B, C> {
   A? a;
   B? b;
@@ -22,5 +24,5 @@ class Union3<A, B, C> {
     this.a,
     this.b,
     this.c,
-  }) : assert(xorParams([a, b, c]));
+  }) : assert(oneNotNull([a, b, c]));
 }
