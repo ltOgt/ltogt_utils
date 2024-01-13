@@ -8,14 +8,17 @@ void main() {
 
       su = SealedUnion.left(20);
 
-      su.resolve(
+      var r = su.resolve(
         onLeft: (v) {
           expect(v, 20);
+          return 1.0;
         },
         onRight: (v) {
           expect(false, true);
+          throw "";
         },
       );
+      expect(r, 1.0);
 
       switch (su) {
         case SealedUnionLeft l:
@@ -26,14 +29,17 @@ void main() {
 
       su = SealedUnion.right("20");
 
-      su.resolve(
+      r = su.resolve(
         onLeft: (v) {
           expect(false, true);
+          throw "";
         },
         onRight: (v) {
           expect(v, "20");
+          return 2.0;
         },
       );
+      expect(r, 2.0);
 
       switch (su) {
         case SealedUnionLeft():

@@ -1,11 +1,11 @@
 sealed class SealedUnion<L, R> {
-  void resolve({
-    required void Function(L l) onLeft,
-    required void Function(L l) onRight,
+  T resolve<T>({
+    required T Function(L l) onLeft,
+    required T Function(R r) onRight,
   }) =>
       switch (this) {
-        final SealedUnionLeft left => left.value,
-        final SealedUnionRight right => right.value,
+        final SealedUnionLeft left => onLeft(left.value),
+        final SealedUnionRight right => onRight(right.value),
       };
 
   factory SealedUnion.left(L l) => SealedUnionLeft(value: l);
