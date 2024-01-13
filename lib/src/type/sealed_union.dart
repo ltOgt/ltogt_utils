@@ -11,17 +11,17 @@ sealed class SealedUnion<L, R> {
   factory SealedUnion.left(L l) => SealedUnionLeft(value: l);
   factory SealedUnion.right(R r) => SealedUnionRight(value: r);
 
-  SealedUnion();
+  const SealedUnion();
 }
 
 class SealedUnionLeft<L, R> extends SealedUnion<L, R> {
   final L value;
 
-  SealedUnionLeft({required this.value});
+  const SealedUnionLeft({required this.value});
 }
 
 class SealedUnionRight<L, R> extends SealedUnion<L, R> {
   final R value;
 
-  SealedUnionRight({required this.value});
+  const SealedUnionRight({required this.value});
 }
