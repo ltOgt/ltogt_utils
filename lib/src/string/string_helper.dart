@@ -1,4 +1,5 @@
 import 'package:ltogt_utils/ltogt_utils.dart';
+import 'package:characters/characters.dart';
 
 class StringHelper {
   StringHelper._();
@@ -40,7 +41,11 @@ class StringHelper {
   /// Breaks on empty string.
   static String nextChar(String s, [int i = 1]) => charFromInt(charAsInt(s) + i);
   static String charFromInt(int i, [String? base]) => String.fromCharCode(i + (orNull(() => charAsInt(base!)) ?? 0));
-  static int charAsInt(String s) => s.codeUnits.first;
+  static int charAsInt(String s) {
+    assert(s.codeUnits.length == 1, "Should only be used for simple ascii characters");
+    return s.codeUnits.first;
+  }
+
   static String charAt(String s, int index) => String.fromCharCode(s.codeUnits[index]);
 
   /// Returns a list of two strings
@@ -65,7 +70,7 @@ class StringHelper {
   static StringOffset? wordAtIndexBounds(String s, int i, [String delimiter = " "]) {
     assert(delimiter.length == 1, "Only works for single char delimiters");
     if (i >= s.length || i < 0) return null;
-    if (charAt(s, i) == delimiter) return null;
+    if (s.characters.elementAtOrNull(i) == delimiter) return null;
 
     int? start, end;
 
