@@ -6,6 +6,8 @@ class FuzzyMatch {
   final bool startsWithMatch;
   final List<String> segments;
 
+  bool get hasMatch => startsWithMatch || segments.length > 2;
+
   FuzzyMatch._(this.startsWithMatch, this.segments);
   FuzzyMatch({required this.startsWithMatch, required this.segments});
 
@@ -25,7 +27,7 @@ class FuzzyMatch {
 }
 
 abstract class FuzzyMatcher {
-  static FuzzyMatch matchQuery(String query, String target) {
+  static FuzzyMatch matchQuery(String query, String target, {bool caseSensitive = true}) {
     if (query.isEmpty) return FuzzyMatch._(false, [target]);
     if (target.isEmpty) return FuzzyMatch._(false, [target]);
 
@@ -34,7 +36,9 @@ abstract class FuzzyMatcher {
     final int targetLength = targetChars.length;
     final int queryLength = queryChars.length;
 
-    final bool isFirstMatch = queryChars.first == targetChars.first;
+    final bool isFirstMatch = caseSensitive
+        ? queryChars.first == targetChars.first
+        : queryChars.first.toLowerCase() == targetChars.first.toLowerCase();
 
     List<String> aggregate = [];
     StringBuffer buffer = StringBuffer();
@@ -46,7 +50,11 @@ abstract class FuzzyMatcher {
       final currentQueryChar = queryChars[queryIndex];
       final currentTargetChar = targetChars[targetIndex];
 
-      if (currentQueryChar == currentTargetChar) {
+      bool isCurrentMatch = caseSensitive
+          ? currentQueryChar == currentTargetChar
+          : currentQueryChar.toLowerCase() == currentTargetChar.toLowerCase();
+
+      if (isCurrentMatch) {
         queryIndex += 1;
         // We found a match
         if (isMatchMode) {

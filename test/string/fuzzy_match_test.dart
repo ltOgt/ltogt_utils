@@ -17,5 +17,15 @@ void main() {
       FuzzyMatcher.matchQuery("abcdefhij", "abc def hi"),
       FuzzyMatch(startsWithMatch: false, segments: ["abc def hi"]),
     );
+
+    expect(
+      FuzzyMatcher.matchQuery("aBc", "Abc", caseSensitive: true),
+      FuzzyMatch(startsWithMatch: false, segments: ["Abc"]),
+    );
+
+    expect(
+      FuzzyMatcher.matchQuery("aBc", "Abc", caseSensitive: false),
+      FuzzyMatch(startsWithMatch: true, segments: ["Abc"]),
+    );
   });
 }
