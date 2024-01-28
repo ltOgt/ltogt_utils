@@ -27,5 +27,13 @@ void main() {
       FuzzyMatcher.matchQuery("aBc", "Abc", caseSensitive: false),
       FuzzyMatch(startsWithMatch: true, segments: ["Abc"]),
     );
+
+    expect(
+      FuzzyMatcher.matchQuery("other_file.dart", "my_project/some/other/dir/other_file.dart"),
+      FuzzyMatch(
+        startsWithMatch: false,
+        segments: ["my_pr", "o", "jec", "t", "/some/ot", "her", "/dir/other", "_file.dart"],
+      ),
+    );
   });
 }
