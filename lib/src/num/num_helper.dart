@@ -1,3 +1,5 @@
+import 'package:characters/characters.dart';
+
 class NumHelper {
   NumHelper._();
 
@@ -9,7 +11,9 @@ class NumHelper {
     return num.parse(d.toStringAsFixed(p)).toDouble();
   }
 
-  static String paddedString(int value, int maxForPaddingLength) {
+  static String paddedString(int value, int maxForPaddingLength, {String paddingChar = "0"}) {
+    assert(paddingChar.characters.length == 1, "Only use single chars for padding");
+
     if ("$maxForPaddingLength".length < "$value".length) {
       throw Exception(
         "maxForPaddingLength lenght must be larger than value length! $maxForPaddingLength.length < $value.length",
@@ -20,9 +24,9 @@ class NumHelper {
     String v = value.toString();
     if (value < 0) {
       String _v = v.replaceFirst("-", "");
-      return "-" + ("0" * (length - _v.length)) + _v;
+      return "-" + (paddingChar * (length - _v.length)) + _v;
     }
-    return ("0" * (length - v.length)) + v;
+    return (paddingChar * (length - v.length)) + v;
   }
 
   // basically min-max scaling
