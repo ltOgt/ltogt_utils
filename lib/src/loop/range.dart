@@ -1,4 +1,4 @@
-class Range extends Iterable {
+class Range extends Iterable<int> {
   @override
   _RangeIterator get iterator => _gen();
 
@@ -16,7 +16,7 @@ class Range extends Iterable {
             ));
 }
 
-class _RangeIterator implements Iterator {
+class _RangeIterator implements Iterator<int> {
   @override
   int current;
   @override
