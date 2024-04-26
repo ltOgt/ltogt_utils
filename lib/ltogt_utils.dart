@@ -65,3 +65,5 @@ export 'src/tree/tree_walker.dart';
 export 'src/random_utils.dart';
 
 export 'src/read_only.dart';
+
+export 'src/use.dart';
