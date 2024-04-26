@@ -24,6 +24,7 @@ export 'src/map/n_way_lookup.dart';
 export 'src/map/invert_map.dart';
 export 'src/map/read_only_map.dart';
 export 'src/map/put_if_absent_async.dart';
+export 'src/map/one_to_many.dart';
 
 export 'src/file/file_helper.dart';
 
