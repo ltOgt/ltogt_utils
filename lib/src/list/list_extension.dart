@@ -1,3 +1,5 @@
+import 'dart:math';
+
 extension ListExtension<E> on Iterable<E> {
   /// Returns a new eagerly computed [List] with elements of type [T] that are created by
   /// calling `f` on each element of this `List` with elements of type [E] in order of increasing index.
@@ -68,4 +70,17 @@ extension ListExtension<E> on Iterable<E> {
   E pyIndex(int i) => i > 0 //
       ? this.elementAt(i)
       : this.elementAt(this.length + i);
+}
+
+extension ListExtensionList<E> on List<E> {
+  /// ```dart
+  /// final colors = <String>['red', 'green', 'blue', 'orange', 'pink'];
+  /// print(colors.sublist(1, 3)); // [green, blue]
+  /// ```
+  List<E> sublistSafe(int start, [int? end]) {
+    return sublist(
+      max(0, start),
+      end == null ? null : min(length, end),
+    );
+  }
 }

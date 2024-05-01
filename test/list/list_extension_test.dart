@@ -11,4 +11,23 @@ void main() {
       );
     });
   });
+
+  test('sublistSafe', () async {
+    expect(
+      [1, 2, 3].sublistSafe(-1, 4),
+      [1, 2, 3],
+    );
+    expect(
+      [1, 2, 3].sublistSafe(0, 1),
+      [1],
+    );
+    expect(
+      [1, 2, 3].sublistSafe(0, 3),
+      [1, 2, 3],
+    );
+    expect(
+      [1, 2, 3].sublistSafe(2, 3),
+      [3],
+    );
+  });
 }
