@@ -141,4 +141,25 @@ class FileTreeHelper {
     // Path segments are valid and can be joined to create a file path
     return pathSegments.fold(rootDir.parent.path, (acc, ele) => FileHelper.joinPaths(acc, ele));
   }
+
+  static List<FileTreePath> getLeafsByWalking(FileTree fileTree) {
+    final flattened = walkDFS<({FileTreeEntity entity, String path})>(
+      rootNodeSource: (entity: fileTree.rootDir, path: "${fileTree.rootDir.name}"),
+      getChildrenSource: (nodeSource) => switch (nodeSource.entity) {
+        FileTreeFile() => [],
+        final FileTreeDir dir => dir.entities
+            .map(
+              (e) => (entity: e, path: "${nodeSource.path}/${e.name}"),
+            )
+            .toList(),
+        _ => throw StateError("Should be a sealed class tbh"),
+      },
+    );
+
+    return [
+      for (final node in flattened)
+        if (node.sourceNode.entity is FileTreeFile) //
+          FileTreePath(node.sourceNode.path.split("/")),
+    ];
+  }
 }
