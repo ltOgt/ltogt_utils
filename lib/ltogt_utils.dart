@@ -69,3 +69,5 @@ export 'src/random_utils.dart';
 export 'src/read_only.dart';
 
 export 'src/use.dart';
+
+export 'src/mutator.dart';
