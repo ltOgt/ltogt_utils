@@ -1,3 +1,7 @@
+/// This is just for suggestion discovery since i often search for debounce helper instead
+@Deprecated("Use DelayedUnique")
+typedef DebounceHelper_ = DelayedUnique;
+
 /// A static class that helps with delayed calls that might get triggered often
 /// but should only run once.
 ///
