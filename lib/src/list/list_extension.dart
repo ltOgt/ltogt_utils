@@ -95,4 +95,14 @@ extension ListExtensionList<E> on List<E> {
           change(e),
     ];
   }
+
+  List<E> copyWithChanged(bool Function(int index, E element) shouldChange, Mutator<E>? change) {
+    return [
+      for (final (i, e) in this.indexed) //
+        if (!shouldChange(i, e)) //
+          e
+        else if (change != null)
+          change(e),
+    ];
+  }
 }

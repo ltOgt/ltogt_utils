@@ -49,4 +49,23 @@ void main() {
       [1, 3],
     );
   });
+
+  test('copyWithChanged', () async {
+    expect(
+      [1, 2, 3].copyWithChanged((_, __) => false, null),
+      [1, 2, 3],
+    );
+    expect(
+      [1, 2, 3].copyWithChanged((_, e) => e % 2 == 0, (_) => 10),
+      [1, 10, 3],
+    );
+    expect(
+      [1, 2, 3].copyWithChanged((i, _) => i < 2, (_) => 10),
+      [10, 10, 3],
+    );
+    expect(
+      [1, 2, 3].copyWithChanged((i, _) => i < 2, null),
+      [3],
+    );
+  });
 }
