@@ -30,4 +30,23 @@ void main() {
       [3],
     );
   });
+
+  test('copyWithChangedAtIndex', () async {
+    expect(
+      [1, 2, 3].copyWithChangedAtIndex(0, null),
+      [2, 3],
+    );
+    expect(
+      [1, 2, 3].copyWithChangedAtIndex(0, (_) => 10),
+      [10, 2, 3],
+    );
+    expect(
+      [1, 2, 3].copyWithChangedAtIndex(2, (_) => 10),
+      [1, 2, 10],
+    );
+    expect(
+      [1, 2, 3].copyWithChangedAtIndex(1, null),
+      [1, 3],
+    );
+  });
 }

@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:ltogt_utils/src/mutator.dart';
+
 extension ListExtension<E> on Iterable<E> {
   /// Returns a new eagerly computed [List] with elements of type [T] that are created by
   /// calling `f` on each element of this `List` with elements of type [E] in order of increasing index.
@@ -82,5 +84,15 @@ extension ListExtensionList<E> on List<E> {
       max(0, start),
       end == null ? null : min(length, end),
     );
+  }
+
+  List<E> copyWithChangedAtIndex(int index, Mutator<E>? change) {
+    return [
+      for (final (i, e) in this.indexed) //
+        if (i != index) //
+          e
+        else if (change != null)
+          change(e),
+    ];
   }
 }
