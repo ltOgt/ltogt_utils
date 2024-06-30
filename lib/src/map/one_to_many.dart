@@ -42,4 +42,6 @@ class OneToMany<O, M> {
     assert(_oneToMany.keys.contains(one));
     _oneToMany[one]!.remove(oneOfMany);
   }
+
+  Iterable<O> get keys => _oneToMany.keys;
 }
