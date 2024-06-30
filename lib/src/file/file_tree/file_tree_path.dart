@@ -3,6 +3,10 @@ import 'package:collection/collection.dart';
 
 import 'package:ltogt_utils/src/file/file_tree/file_tree.dart';
 
+/// illegal in paths since cant use "/" without escaping
+/// using this as simple delimeter when needing to encode as string
+const _pathSaveDelim = "//";
+
 /// A path constructed from [FileTree].
 ///
 /// The root folder is included, but the system path to that root folder is hidden.
@@ -21,8 +25,10 @@ class FileTreePath {
   List<String> get segmentsWithoutRoot => segments.length < 2 ? const [] : segments.sublist(1);
 
   List<String> encode() => segments;
+  String encodeAsKey() => segments.join(_pathSaveDelim);
 
   static FileTreePath decode(List<dynamic> l) => FileTreePath(l.cast());
+  static FileTreePath decodeFromKey(String s) => FileTreePath(s.split(_pathSaveDelim));
 
   @override
   String toString() {
