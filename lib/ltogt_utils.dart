@@ -71,3 +71,5 @@ export 'src/read_only.dart';
 export 'src/use.dart';
 
 export 'src/mutator.dart';
+
+export 'src/degree_to_radian.dart';
